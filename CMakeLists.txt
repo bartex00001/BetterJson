@@ -1,4 +1,4 @@
-set(CMAKE_REQUIRED_VERSION 3.14)
+set(CMAKE_REQUIRED_VERSION 3.24)
 cmake_minimum_required(VERSION ${CMAKE_REQUIRED_VERSION})
 
 project(

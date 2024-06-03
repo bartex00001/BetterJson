@@ -2,12 +2,13 @@
 
 #include <BetterJson/PrimTypes.hpp>
 
+
 namespace json
 {
 
 union PrimVariant
 {
-	PrimNull pNull{ .id = PRIM_NULL_ID };
+	PrimNull pNull{.id = PRIM_NULL_ID};
 	PrimArray pArray;
 	PrimObject pObject;
 	PrimBool pBool;

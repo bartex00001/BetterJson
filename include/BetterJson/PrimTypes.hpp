@@ -3,7 +3,6 @@
 #include <cstdint>
 
 
-
 namespace json
 {
 
@@ -25,16 +24,16 @@ struct PrimNull
 struct PrimArray
 {
 	TypeId id;
-	uint32_t size;
-	uint32_t capacity;
+	std::uint32_t size;
+	std::uint32_t capacity;
 	union PrimVariant* elements;
 };
 
 struct PrimObject
 {
 	TypeId id;
-	uint32_t capacity;
-	uint32_t size;
+	std::uint32_t capacity;
+	std::uint32_t size;
 	struct ObjValue* elements;
 };
 
