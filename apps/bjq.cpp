@@ -6,11 +6,12 @@
 
 int main()
 {
-	json::MemoryPool<json::CStdAllocator> csa;
-	int* i{static_cast<int*>(csa.malloc(4))};
+	json::MemoryPool< json::CStdAllocator > cse;
 
-	*i = 10;
+	int* i = reinterpret_cast< int* > (cse.malloc(4));
+	*i = 5;
+
 	std::cout << *i;
 
-	csa.free(i);
+	cse.free(i);
 }

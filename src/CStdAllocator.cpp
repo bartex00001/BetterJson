@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <new>
+#include <iostream>
 
 #include <BetterJson/CStdAllocator.hpp>
 

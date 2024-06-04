@@ -1,5 +1,7 @@
 #pragma once
 
+#include <optional>
+
 #include <BetterJson/Allocator.hpp>
 
 
@@ -24,17 +26,32 @@ class MemoryPool
 	{
 		std::uint32_t size{};
 		std::uint32_t capacity{};
-		struct ChunkHeader* next{};
+		ChunkHeader* next{};
 	};
 
 	ChunkHeader* first{};
 	ChunkHeader* last{};
-	std::uint32_t chunkCount{};
+
+	std::optional< char* > fileBuffer{};
 
 	void addChunk(std::size_t n);
-	void allocateToChunk(std::size_t n);
+	void* allocate(std::size_t n);
+
+	bool canFitAlloc(std::size_t n) const;
+	bool isLastElement(const void* addr, std::size_t elementSize) const;
+	static constexpr bool largerThanChunk(std::size_t n);
 
 public:
+	MemoryPool();
+	MemoryPool(char* buffer);
+	~MemoryPool() noexcept;
+
+	MemoryPool(const MemoryPool& mp) = delete;
+	MemoryPool operator=(const MemoryPool& mp) = delete;
+
+	MemoryPool(MemoryPool&& mp);
+	MemoryPool& operator=(MemoryPool&& mp);
+
 	static void free(void* addr);
 
 	[[nodiscard("Memory allocated via malloc must be released")]]
@@ -42,8 +59,6 @@ public:
 
 	[[nodiscard("Memory allocated via malloc must be released")]]
 	void* realloc(void* addr, std::size_t oldSize, std::size_t newSize);
-
-	std::size_t size() const;
 };
 
 }// namespace json
