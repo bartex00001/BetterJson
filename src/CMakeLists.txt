@@ -1,7 +1,8 @@
 file(GLOB_RECURSE
         HEADER_LIST
         CONFIGURE_DEPENDS
-        "${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/*.hpp")
+        "${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/*.hpp"
+        "${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/*.tpp")
 
 # Collect implementations
 file(GLOB_RECURSE

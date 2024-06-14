@@ -51,8 +51,8 @@ struct PrimFloat
 
 struct PrimInt
 {
-	TypeId id{};
-	__int128_t value{};
+	TypeId id;
+	__int128_t value;
 };
 
 struct PrimString
