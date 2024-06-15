@@ -3,6 +3,7 @@
 #include <BetterJson/Allocator.hpp>
 #include <BetterJson/CStdAllocator.hpp>
 #include <BetterJson/MemoryPool.hpp>
+#include <BetterJson/Parser.hpp>
 
 int main()
 {

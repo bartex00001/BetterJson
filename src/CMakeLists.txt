@@ -15,3 +15,4 @@ add_library(betterJson ${SRC_LIST} ${HEADER_LIST})
 target_include_directories(betterJson PUBLIC ../include)
 
 target_compile_features(betterJson PUBLIC cxx_std_23)
+

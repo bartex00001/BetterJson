@@ -2,18 +2,37 @@
 
 #include <BetterJson/Prim.hpp>
 #include <BetterJson/Allocator.hpp>
+#include <BetterJson/File.hpp>
 
 
-namespace json::parser
+namespace json
 {
 
-PrimVariant* parseObject(Allocator auto& alloc, char*& buffer);
-PrimVariant* parseArray(Allocator auto& alloc, char*& buffer);
-PrimVariant* parseString(Allocator auto& alloc, char*& buffer);
-PrimVariant* parseInt(Allocator auto& alloc, char*& buffer);
-PrimVariant* parseFloat(Allocator auto& alloc, char*& buffer);
-PrimVariant* parseBool(Allocator auto& alloc, char*& buffer);
-PrimVariant* parseNull(Allocator auto& alloc, char*& buffer);
+template< Allocator TAllocator >
+class Parser
+{
+	std::reference_wrapper< TAllocator > alloc;
+	std::reference_wrapper< File > file;
+
+	void skipWhitespace();
+
+	void parseString(char*& str);
+	void parseObjectValue(ObjKeyValuePair& objKeyVal);
+	void parseNumber(PrimVariant& primVariant);
+
+	void parseAnyPrim(PrimVariant& primVariant);
+
+	void parseObject(PrimObject& obj);
+	void parseArray(PrimArray& arr);
+	void parseString(PrimString& str);
+	void parseInt(PrimInt& i, char buffor[], const char* end);
+	void parseFloat(PrimFloat& f, char buffor[], const char* end);
+	void parseBool(PrimBool& b);
+	void parseNull(PrimNull& null);
+
+public:
+	Parser(TAllocator& alloc, File& file);
+};
 
 }
 

@@ -17,7 +17,7 @@ union PrimVariant
 	PrimString pString;
 };
 
-struct ObjValue
+struct ObjKeyValuePair
 {
 	char* key{};
 	PrimVariant value;

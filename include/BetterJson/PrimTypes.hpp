@@ -34,7 +34,7 @@ struct PrimObject
 	TypeId id;
 	std::uint32_t capacity;
 	std::uint32_t size;
-	struct ObjValue* elements;
+	struct ObjKeyValuePair* elements;
 };
 
 struct PrimBool
@@ -52,7 +52,7 @@ struct PrimFloat
 struct PrimInt
 {
 	TypeId id;
-	__int128_t value;
+	long long value;
 };
 
 struct PrimString
