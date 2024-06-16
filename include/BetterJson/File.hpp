@@ -7,11 +7,10 @@
 #include <optional>
 #include <string>
 
-#include <BetterJson/Json.hpp>
-
 #ifndef BETTER_JSON_LINE_BUFFER_SIZE
 #define BETTER_JSON_LINE_BUFFER_SIZE 128
 #endif
+
 
 namespace json
 {
@@ -24,17 +23,13 @@ public:
 
 	virtual std::size_t getLineNumber() const = 0;
 	virtual std::string getLine() = 0;
-
-	Json operator()();
-
-	virtual ~File() = 0;
 };
 
 
 class FileBuffer final : public File
 {
-	char* lineStart{};
-	char* buffer{};
+	const char* lineStart{};
+	const char* buffer{};
 	std::size_t lineNumber{1};
 
 public:
@@ -44,7 +39,7 @@ public:
 	std::size_t getLineNumber() const override;
 	std::string getLine() override;
 
-	FileBuffer(char* str);
+	FileBuffer(const char* str);
 };
 
 
@@ -71,3 +66,5 @@ public:
 };
 
 }
+
+#include <BetterJson/Implementations/File.tpp>

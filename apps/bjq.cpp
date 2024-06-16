@@ -1,18 +1,29 @@
 #include <iostream>
-#include <BetterJson/Prim.hpp>
-#include <BetterJson/Allocator.hpp>
-#include <BetterJson/CStdAllocator.hpp>
-#include <BetterJson/MemoryPool.hpp>
-#include <BetterJson/Parser.hpp>
+
+#include <BetterJson/json.hpp>
+
+
+void iterate(json::Array& arr)
+{
+    for(int i = 0; i < arr.size(); i++)
+    {
+        std::cout <<
+            (long double)arr[i].as< json::Float >()
+            << std::endl;
+    }
+}
 
 int main()
 {
-	json::MemoryPool< json::CStdAllocator > cse;
-
-	int* i = reinterpret_cast< int* > (cse.malloc(4));
-	*i = 5;
-
-	std::cout << *i;
-
-	cse.free(i);
+    try
+    {
+        auto json = json::parse(json::FileBuffer("{\"key\":[1.0,2.0]}"));
+        std::cout << "Parsed JSON" << std::endl;
+        iterate((*json)["key"].as< json::Array >());
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
 }
+

@@ -2,6 +2,7 @@
 
 #include <cstdint>
 
+#define BETTER_JSON_ARRAY_DEFAULT_CAPACITY 8
 
 namespace json
 {
@@ -26,15 +27,15 @@ struct PrimArray
 	TypeId id;
 	std::uint32_t size;
 	std::uint32_t capacity;
-	union PrimVariant* elements;
+	union PrimVariant** elements;
 };
 
 struct PrimObject
 {
 	TypeId id;
-	std::uint32_t capacity;
 	std::uint32_t size;
-	struct ObjKeyValuePair* elements;
+	std::uint32_t capacity;
+	struct ObjKeyValuePair** elements;
 };
 
 struct PrimBool

@@ -9,17 +9,20 @@
 namespace json
 {
 
-class SyntaxError : std::exception
+class SyntaxError : public std::exception
 {
 protected:
 	std::string line;
 	std::size_t lineNumber;
 
+    std::string message;
 
 public:
 	SyntaxError(File& buffer) noexcept;
 
-	std::string what();
+	const char* what() const noexcept override;
 };
 
 }
+
+#include <BetterJson/Implementations/Exceptions.tpp>

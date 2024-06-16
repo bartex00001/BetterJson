@@ -3,16 +3,18 @@
 #include <BetterJson/Prim.hpp>
 #include <BetterJson/Allocator.hpp>
 #include <BetterJson/File.hpp>
+#include <BetterJson/JsonTypes/Json.hpp>    
 
 
 namespace json
 {
 
-template< Allocator TAllocator >
+template< Allocator TAllocator = DEFAULT_ALLOCATOR>
 class Parser
 {
 	std::reference_wrapper< TAllocator > alloc;
 	std::reference_wrapper< File > file;
+    bool used{};
 
 	void skipWhitespace();
 
@@ -32,8 +34,9 @@ class Parser
 
 public:
 	Parser(TAllocator& alloc, File& file);
+    PrimObject& operator()();
 };
 
 }
 
-#include <BetterJson/Parser.tpp>
+#include <BetterJson/Implementations/Parser.tpp>

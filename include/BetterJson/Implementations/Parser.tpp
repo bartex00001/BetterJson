@@ -4,7 +4,7 @@
 
 #include <BetterJson/Exceptions.hpp>
 #include <BetterJson/Parser.hpp>
-#include <bits/socket.h>
+#include <BetterJson/PrimTypes.hpp>
 
 
 namespace json
@@ -25,26 +25,39 @@ void Parser< TAllocator >::parseString(char*& str)
 		throw SyntaxError(file);
 
 	std::size_t strLen{};
-
+	std::size_t strCap{};
 
 	bool neutralized{};
-	char curr{file.get().get()};
+	char curr{file.get().peek()};
 	while(curr != '"' || neutralized)
 	{
-		neutralized = file.get().peek() == '\\';
-		alloc.get().realloc(str, strLen, strLen+1);
+		if(strLen >= strCap)
+			str = alloc.get().realloc(str, strCap, strCap += BETTER_JSON_ARRAY_DEFAULT_CAPACITY);
+
+		neutralized = curr == '\\';
 		str[strLen++] = curr;
+        file.get().get();
+        curr = file.get().peek();
 	}
 
-	alloc.get().realloc(str, strLen, strLen+1);
+	if(strLen >= strCap)
+		str = alloc.get().realloc(str, strCap, strCap += 1);
 	str[strLen] = '\0';
+
+    file.get().get(); // Consume the last quote
 }
 
 template< Allocator TAllocator >
 void Parser< TAllocator >::parseObjectValue(ObjKeyValuePair& objKeyVal)
 {
 	parseString(objKeyVal.key);
-	parseAnyPrim(objKeyVal.value);
+
+    skipWhitespace();
+    if(!file.get().consume(':'))
+        throw SyntaxError(file);
+
+	objKeyVal.value = static_cast< PrimVariant* >(alloc.get().malloc(sizeof(PrimVariant)));
+	parseAnyPrim(*objKeyVal.value);
 }
 
 template< Allocator TAllocator >
@@ -53,22 +66,18 @@ void Parser< TAllocator >::parseNumber(PrimVariant& primVariant)
 	constexpr std::size_t buffSize{64};
 	char buffor[buffSize];
 	std::size_t inx{};
-	if(file.get().consume('-'))
-	{
-		buffor[inx++] = '-';
-		if(!isdigit(file.get().peek()))
-			throw SyntaxError(file);
-	}
 
 	bool isFloat{};
-	char curr{file.get().get()};
-	while(isdigit(curr) || curr == 'e' || curr == 'E' || curr == '.')
+	char curr{file.get().peek()};
+	while(isdigit(curr) || curr == 'e' || curr == 'E' || curr == '.' || curr == '-' || curr == '+')
 	{
 		isFloat |= curr == 'e' || curr == 'E' || curr == '.';
 		buffor[inx++] = curr;
-		curr = file.get().get();
 		if(inx >= buffSize-1)
 			throw SyntaxError(file);
+
+        file.get().get();
+        curr = file.get().peek();
 	}
 	buffor[inx] = '\0';
 
@@ -82,7 +91,6 @@ template< Allocator TAllocator >
 void Parser< TAllocator >::parseAnyPrim(PrimVariant& primVariant)
 {
 	skipWhitespace();
-
 	if(isdigit(file.get().peek())) // No good way for encoding this in a switch
 	{
 		parseNumber(primVariant);
@@ -118,14 +126,14 @@ void Parser< TAllocator >::parseAnyPrim(PrimVariant& primVariant)
 template< Allocator TAllocator >
 void Parser< TAllocator >::parseObject(PrimObject& obj)
 {
-	skipWhitespace(file);
+	skipWhitespace();
 	if(!file.get().consume('{'))
 		throw SyntaxError(file);
 
 	obj = PrimObject{
 		.id = PRIM_OBJECT_ID,
-		.capacity = 0,
 		.size = 0,
+		.capacity = 0,
 		.elements = nullptr
 	};
 
@@ -135,9 +143,17 @@ void Parser< TAllocator >::parseObject(PrimObject& obj)
 
 	do
 	{
-		alloc.realloc(obj.elements, obj.capacity, obj.capacity += sizeof(ObjKeyValuePair));
-		parseObjectValue(obj.elements[obj.size]);
-		obj.size += sizeof(ObjKeyValuePair);
+		if(obj.size * sizeof(ObjKeyValuePair*) >= obj.capacity)
+            obj.elements = alloc.get().realloc(
+                obj.elements, 
+                obj.capacity, 
+                obj.capacity += sizeof(ObjKeyValuePair*) * BETTER_JSON_ARRAY_DEFAULT_CAPACITY);
+
+        obj.elements[obj.size] = static_cast< ObjKeyValuePair* >(alloc.get().malloc(sizeof(ObjKeyValuePair)));
+		parseObjectValue(*obj.elements[obj.size]);
+		obj.size++;
+
+        skipWhitespace();
 	} while(file.get().consume(','));
 
 	if(!file.get().consume('}'))
@@ -164,9 +180,17 @@ void Parser< TAllocator >::parseArray(PrimArray& arr)
 
 	do
 	{
-		alloc.realloc(arr.elements, arr.capacity, arr.capacity += sizeof(ObjKeyValuePair));
-		parseObjectValue(arr.elements[arr.size]);
-		arr.size += sizeof(ObjKeyValuePair);
+        if(arr.size * sizeof(PrimVariant*) >= arr.capacity)
+            arr.elements = alloc.get().realloc(
+                arr.elements,
+                arr.capacity,
+                arr.capacity += sizeof(PrimVariant*) * BETTER_JSON_ARRAY_DEFAULT_CAPACITY);
+
+        arr.elements[arr.size] = static_cast< PrimVariant* >(alloc.get().malloc(sizeof(PrimVariant)));
+		parseAnyPrim(*arr.elements[arr.size]);
+		arr.size++;
+
+        skipWhitespace();
 	} while(file.get().consume(','));
 
 	if(!file.get().consume(']'))
@@ -262,6 +286,21 @@ Parser< TAllocator >::Parser(TAllocator& alloc, File& file)
 	: alloc(alloc),
       file(file)
 {
+}
+
+template< Allocator TAllocator >
+PrimObject& Parser< TAllocator >::operator()()
+{
+    if(used)
+        throw std::logic_error("Parser already used for given file.");
+
+    used = true;
+    PrimObject* obj{
+        static_cast< PrimObject* >(alloc.get().malloc(sizeof(PrimObject)))
+    };
+
+    parseObject(*obj);
+    return *obj;
 }
 
 }

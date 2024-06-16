@@ -32,8 +32,6 @@ class MemoryPool
 	ChunkHeader* first{};
 	ChunkHeader* last{};
 
-	std::optional< char* > fileBuffer{};
-
 	void addChunk(std::size_t n);
 	void* allocate(std::size_t n);
 
@@ -43,7 +41,6 @@ class MemoryPool
 
 public:
 	MemoryPool();
-	MemoryPool(char* buffer);
 	~MemoryPool() noexcept;
 
 	MemoryPool(const MemoryPool& mp) = delete;
@@ -52,17 +49,17 @@ public:
 	MemoryPool(MemoryPool&& mp);
 	MemoryPool& operator=(MemoryPool&& mp);
 
-	static void free(void* addr);
+	static void free(auto* addr);
 
 	[[nodiscard("Memory allocated via malloc must be released")]]
 	void* malloc(std::size_t n);
 
 	[[nodiscard("Memory allocated via malloc must be released")]]
-	void* realloc(void* addr, std::size_t oldSize, std::size_t newSize);
+	auto realloc(auto* addr, std::size_t oldSize, std::size_t newSize) -> decltype(addr);
 };
 
 }// namespace json
 
 
 // Include template implementation
-#include <BetterJson/MemoryPool.tpp>
+#include <BetterJson/Implementations/MemoryPool.tpp>
