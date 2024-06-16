@@ -38,5 +38,3 @@ public:
 };
 
 }
-
-#include <BetterJson/Implementations/Parser.tpp>

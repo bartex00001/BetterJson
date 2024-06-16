@@ -28,22 +28,4 @@ Json& Json::operator[](const std::string& key)
 //     return as< T >();
 // }
 
-inline std::shared_ptr< Json > parse(File& file)
-{
-    auto allocator{std::make_shared< DEFAULT_ALLOCATOR >(DEFAULT_ALLOCATOR{})};
-    return std::make_shared< Object >(
-        allocator,
-        Parser<>(*allocator, file)()
-    );
-}
-
-inline std::shared_ptr< Json > parse(File&& file)
-{
-    auto allocator{std::make_shared< DEFAULT_ALLOCATOR >(DEFAULT_ALLOCATOR{})};
-    return std::make_shared< Object >(
-        allocator,
-        Parser<>(*allocator, file)()
-    );
-}
-
 }

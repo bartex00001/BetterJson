@@ -12,42 +12,18 @@ class Int : public Json
 
 public:
     Int() = default;
-
-    Int(long long val)
-        : v(val)
-    {}
-
-    Int(const Int& other)
-        : v(other.v)
-    {}
+    Int(long long val);
+    Int(const Int& other);
 
     template<typename TAllocator>
-    Int(std::shared_ptr< TAllocator > alloc, PrimInt& prim)
-        : v(prim.value)
-    {
-        alloc->free(&prim);
-    }
+    Int(std::shared_ptr< TAllocator > alloc, PrimInt& prim);
 
-    long long& value()
-    {
-        return v;
-    }
+    long long& value();
+    long long& operator=(long long val);
 
-    long long& operator=(long long val)
-    {
-        return v = val;
-    }
+    Int& operator=(const Int& other);
 
-    Int& operator=(const Int& other)
-    {
-        v = other.v;
-        return *this;
-    }
-
-    operator long long&() 
-    {
-        return v;
-    }
+    operator long long&();
 };
 
 }

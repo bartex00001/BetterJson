@@ -12,42 +12,18 @@ class Bool : public Json
 
 public:
     Bool() = default;
-
-    Bool(bool val)
-        : v(val)
-    {}
-
-    Bool(const Bool& other)
-        : v(other.v)
-    {}
+    Bool(bool val);
+    Bool(const Bool& other);
 
     template< Allocator TAllocator >
-    Bool(std::shared_ptr< TAllocator > alloc, PrimBool& prim)
-        : v(prim.value)
-    {
-        // alloc->free(&prim);
-    }
+    Bool(std::shared_ptr< TAllocator > alloc, PrimBool& prim);
 
-    bool& value()
-    {
-        return v;
-    }
+    bool& value();
+    
+    bool& operator=(bool val);
+    Bool& operator=(const Bool& other);
 
-    bool& operator=(bool val)
-    {
-        return v = val;
-    }
-
-    Bool& operator=(const Bool& other)
-    {
-        v = other.v;
-        return *this;
-    }
-
-    operator bool&()
-    {
-        return v;
-    }
+    operator bool&();
 };
 
 }

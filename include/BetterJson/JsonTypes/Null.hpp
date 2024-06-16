@@ -12,10 +12,7 @@ public:
     Null() = default;
 
     template< Allocator TAllocator >
-    Null(std::shared_ptr< TAllocator > alloc, PrimNull& pNull)
-    {
-        alloc->free(&pNull);
-    }
+    Null(std::shared_ptr< TAllocator > alloc, PrimNull& pNull);
 };
 
 }

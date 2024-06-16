@@ -66,5 +66,3 @@ public:
 };
 
 }
-
-#include <BetterJson/Implementations/File.tpp>

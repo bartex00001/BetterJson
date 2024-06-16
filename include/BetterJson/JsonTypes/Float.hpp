@@ -12,42 +12,19 @@ class Float : public Json
 
 public:
     Float() = default;
-
-    Float(long double val)
-        : v(val)
-    {}
-
-    Float(const Float& other)
-        : v(other.v)
-    {}
+    Float(long double val);
+    Float(const Float& other);
 
     template< Allocator TAllocator >
-    Float(std::shared_ptr< TAllocator > alloc, PrimFloat& prim)
-        : v(prim.value)
-    {
-        alloc->free(&prim);
-    }
+    Float(std::shared_ptr< TAllocator > alloc, PrimFloat& prim);
 
-    long double& value()
-    {
-        return v;
-    }
+    long double& value();
 
-    long double& operator=(long double val)
-    {
-        return v = val;
-    }
+    long double& operator=(long double val);
 
-    Float& operator=(const Float& other)
-    {
-        v = other.v;
-        return *this;
-    }
+    Float& operator=(const Float& other);
 
-    operator long double&() 
-    {
-        return v;
-    }
+    operator long double&();
 };
 
 }

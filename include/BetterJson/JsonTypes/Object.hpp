@@ -18,93 +18,29 @@ public:
     Object() = default;
 
     template< Allocator TAllocator >
-    Object(std::shared_ptr< TAllocator > alloc,  PrimObject& prim)
-    {
-        data.reserve(prim.size);
-        for(std::size_t i{}; i < prim.size; ++i)
-        {
-            data[std::string(prim.elements[i]->key)] = JsonVariant(*prim.elements[i]->value, alloc);
-            alloc->free(prim.elements[i]->key);
-            alloc->free(prim.elements[i]);
-        }
+    Object(std::shared_ptr< TAllocator > alloc,  PrimObject& prim);
+    Object(const Object& other);
+    Object(Object&& other);
 
-        alloc->free(prim.elements);
-        alloc->free(&prim);
-    }
+    Object& operator=(const Object& other);
+    Object& operator=(Object&& other);
+    Object& operator=(const std::unordered_map< std::string, std::shared_ptr< Json > >& map);
+    Json& operator[](const std::string& key);
 
-    Object(const Object& other)
-        : data(other.data)
-    {}
-
-    Object(Object&& other)
-        : data(std::move(other.data))
-    {}
-
-    Object& operator=(const Object& other)
-    {
-        data = other.data;
-        return *this;
-    }
-
-    Object& operator=(Object&& other)
-    {
-        data = std::move(other.data);
-        return *this;
-    }
-
-    Object& operator=(const std::unordered_map< std::string, std::shared_ptr< Json > >& map)
-    {
-        data.clear();
-        for(auto& [key, value] : map)
-            data.emplace(key, JsonVariant(value));
-
-        return *this;
-    }
-
-    Json& operator[](const std::string& key)
-    {
-        return *data[key].getJson();
-    }
-
-    std::size_t size() const
-    {
-        return data.size();
-    }
-
-    bool contains(const std::string& key) const
-    {
-        return data.contains(key);
-    }
+    std::size_t size() const;
 
     template< typename T >
-    void push_back(const std::string& key, const T& value)
-    {
-        data.emplace(key, JsonVariant(std::make_shared< T >(value)));
-    }
+    void push_back(const std::string& key, const T& value);
 
     template< typename T >
-    void push_back(const std::string& key, T&& value)
-    {
-        data.emplace(key, JsonVariant(std::make_shared< T >(std::forward<T>(value))));
-    }
+    void push_back(const std::string& key, T&& value);
 
-    void push_back(const std::string& key, const std::shared_ptr< Json >& value)
-    {
-        data.emplace(key, JsonVariant(value));
-    }
+    void push_back(const std::string& key, const std::shared_ptr< Json >& value);
 
-    void erase(const std::string& key)
-    {
-        data.erase(key);
-    }
+    void erase(const std::string& key);
 
-    std::optional< std::shared_ptr< Json > > getOpt(const std::string& key)
-    {
-        if(!contains(key))
-            return std::nullopt;
-
-        return data[key].getJson();
-    }
+    bool contains(const std::string& key) const;
+    std::optional< std::shared_ptr< Json > > getOpt(const std::string& key);
 };
 
 }
