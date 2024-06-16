@@ -11,11 +11,16 @@
 namespace json
 {
 
+class ArrayIterator;
+
 class Array : public Json
 {
     std::vector< JsonVariant > data{};
 
 public:
+    using iterator = ArrayIterator;
+    friend class ArrayIterator;
+
     Array() = default;
 
     template< Allocator TAllocator >
@@ -40,6 +45,36 @@ public:
     void push_back(const std::shared_ptr< Json >& elem);
 
     void pop_back();
+
+    void accept(class Visitor& visitor);
+
+    iterator begin();
+    iterator end();
+};
+
+
+class ArrayIterator
+{
+    Array& arr;
+    std::size_t inx{};
+
+public:
+    using iterator_category = std::forward_iterator_tag;
+    using value_type = Json&;
+    using difference_type = std::ptrdiff_t;
+    using pointer = Json*;
+    using reference = Json&;
+
+    ArrayIterator(Array& arr, std::size_t inx = 0);
+
+    reference operator*();
+    pointer operator->();
+
+    ArrayIterator& operator++();
+    ArrayIterator operator++(int);
+
+    friend bool operator!=(const ArrayIterator& a, const ArrayIterator& b);
+    friend bool operator==(const ArrayIterator& a, const ArrayIterator& b);
 };
 
 }

@@ -25,6 +25,8 @@ public:
     Float& operator=(const Float& other);
 
     operator long double&();
+
+    void accept(class Visitor& visitor);
 };
 
 }

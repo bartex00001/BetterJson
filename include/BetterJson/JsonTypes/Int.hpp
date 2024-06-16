@@ -24,6 +24,8 @@ public:
     Int& operator=(const Int& other);
 
     operator long long&();
+
+    void accept(class Visitor& visitor);
 };
 
 }

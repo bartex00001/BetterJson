@@ -16,7 +16,6 @@ inline bool File::consume(const char expected)
 }
 
 
-
 inline char FileBuffer::peek() const
 {
 	return *buffer;
@@ -55,7 +54,6 @@ inline FileBuffer::FileBuffer(const char* str)
 }
 
 
-
 inline char FileStream::peek() const
 {
 	return lineBuff[linePos];
@@ -64,14 +62,12 @@ inline char FileStream::peek() const
 inline char FileStream::get()
 {
     const char res = lineBuff[linePos++];
-    if(lineBuff[linePos] == '\0') [[unlikely]]
+    if(linePos == lineBuff.size())
     {
         linePos = 0;
-        stream.get().getline(lineBuff, BETTER_JSON_LINE_BUFFER_SIZE);
-    }
-
-    if(res == '\n') [[unlikely]]
+        std::getline(stream.get(), lineBuff);
         lineNumber++;
+    }
 
     return res;
 }
@@ -91,15 +87,17 @@ inline FileStream::FileStream(const std::string& fileName)
 	  stream(fileStream.value())
 {
 	if(!fileStream.value().is_open())
-		throw std::runtime_error("Could not open file");// TODO: Convert into BetterJson exception
+		throw std::runtime_error("Could not open file");
 
-    stream.get().getline(lineBuff, BETTER_JSON_LINE_BUFFER_SIZE);
+    lineBuff.reserve(BETTER_JSON_LINE_BUFFER_SIZE);
+    std::getline(stream.get(), lineBuff);
 }
 
 inline FileStream::FileStream(std::istream& stream)
 	: stream(stream)
 {
-    stream.getline(lineBuff, BETTER_JSON_LINE_BUFFER_SIZE);
+    lineBuff.reserve(BETTER_JSON_LINE_BUFFER_SIZE);
+    std::getline(stream, lineBuff);
 }
 
 inline FileStream::~FileStream()

@@ -24,6 +24,8 @@ public:
     Bool& operator=(const Bool& other);
 
     operator bool&();
+
+    void accept(class Visitor& visitor);
 };
 
 }

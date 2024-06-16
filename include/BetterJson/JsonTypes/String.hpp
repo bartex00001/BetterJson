@@ -21,6 +21,8 @@ public:
     std::string& operator=(const std::string& str);
     String& operator=(const String& other);
     String& operator=(const char* str);
+
+    void accept(class Visitor& visitor);
 };
 
 }

@@ -45,7 +45,7 @@ public:
 
 class FileStream final : public File
 {
-	char lineBuff[BETTER_JSON_LINE_BUFFER_SIZE]{0};
+	std::string lineBuff{};
 	std::size_t linePos{};
 	std::size_t lineNumber{1};
 

@@ -10,11 +10,16 @@
 namespace json
 {
 
+class ObjectIterator;
+
 class Object : public Json
 {
     std::unordered_map< std::string, JsonVariant > data{};
 
 public:
+    using iterator = ObjectIterator;
+    friend class ObjectIterator;
+
     Object() = default;
 
     template< Allocator TAllocator >
@@ -26,6 +31,8 @@ public:
     Object& operator=(Object&& other);
     Object& operator=(const std::unordered_map< std::string, std::shared_ptr< Json > >& map);
     Json& operator[](const std::string& key);
+
+    void accept(class Visitor& visitor);
 
     std::size_t size() const;
 
@@ -41,6 +48,34 @@ public:
 
     bool contains(const std::string& key) const;
     std::optional< std::shared_ptr< Json > > getOpt(const std::string& key);
+
+    iterator begin();
+    iterator end();
+};
+
+
+class ObjectIterator
+{
+    Object& obj;
+    std::unordered_map< std::string, JsonVariant >::iterator it;
+
+public:
+    using iterator_category = std::forward_iterator_tag;
+    using value_type = std::pair< std::string, Json& >;
+    using difference_type = std::ptrdiff_t;
+    using pointer = Json*;
+    using reference = std::pair< std::string, Json& >;
+
+    ObjectIterator(Object& obj, std::unordered_map< std::string, JsonVariant >::iterator it);
+
+    reference operator*();
+    pointer operator->();
+
+    ObjectIterator& operator++();
+    ObjectIterator operator++(int);
+
+    friend bool operator!=(const ObjectIterator& a, const ObjectIterator& b);
+    friend bool operator==(const ObjectIterator& a, const ObjectIterator& b);
 };
 
 }

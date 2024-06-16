@@ -2,7 +2,7 @@
 
 #include <BetterJson/JsonTypes/Object.hpp>
 #include <BetterJson/Prim.hpp>
-
+#include <BetterJson/Visitor.hpp>
 
 namespace json
 {
@@ -94,6 +94,59 @@ std::optional< std::shared_ptr< Json > > Object::getOpt(const std::string& key)
         return std::nullopt;
 
     return data[key].getJson();
+}
+
+void Object::accept(Visitor& visitor)
+{
+    visitor.visit(*this);
+}
+
+Object::iterator Object::begin()
+{
+    return iterator(*this, data.begin());
+}
+
+Object::iterator Object::end()
+{
+    return iterator(*this, data.end());
+}
+
+
+ObjectIterator::ObjectIterator(Object& obj, std::unordered_map< std::string, JsonVariant >::iterator it)
+    : obj(obj), it(it)
+{}
+
+std::pair< std::string, Json& > ObjectIterator::operator*()
+{
+    return {it->first, *it->second.getJson()};
+}
+
+Json* ObjectIterator::operator->()
+{
+    return it->second.getJson().get();
+}
+
+ObjectIterator& ObjectIterator::operator++()
+{
+    ++it;
+    return *this;
+}
+
+ObjectIterator ObjectIterator::operator++(int)
+{
+    ObjectIterator temp(*this);
+    ++it;
+    return temp;
+}
+
+bool operator==(const ObjectIterator& a, const ObjectIterator& b)
+{
+    return a.it == b.it;
+}
+
+bool operator!=(const ObjectIterator& a, const ObjectIterator& b)
+{
+    return a.it != b.it;
 }
 
 }

@@ -2,6 +2,7 @@
 
 #include <BetterJson/JsonTypes/Int.hpp>
 #include <BetterJson/Prim.hpp>
+#include <BetterJson/Visitor.hpp>
 
 
 namespace json
@@ -41,6 +42,11 @@ Int& Int::operator=(const Int& other)
 Int::operator long long&() 
 {
     return v;
+}
+
+void Int::accept(Visitor& visitor)
+{
+    visitor.visit(*this);
 }
 
 }

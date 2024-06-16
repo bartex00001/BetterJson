@@ -2,6 +2,7 @@
 
 #include <BetterJson/JsonTypes/Float.hpp>
 #include <BetterJson/Prim.hpp>
+#include <BetterJson/Visitor.hpp>
 
 
 namespace json
@@ -41,6 +42,11 @@ Float& Float::operator=(const Float& other)
 Float::operator long double&() 
 {
     return v;
+}
+
+void Float::accept(Visitor& visitor)
+{
+    visitor.visit(*this);
 }
 
 }

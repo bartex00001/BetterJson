@@ -4,7 +4,6 @@
 
 #include <BetterJson/MemoryPool.hpp>
 #include <BetterJson/CStdAllocator.hpp>
-// #include <BetterJson/Visitor.hpp>
 
 #define DEFAULT_ALLOCATOR MemoryPool< CStdAllocator >
 
@@ -34,13 +33,9 @@ public:
 
 	Json& operator[](const std::string& key);
 
-    // template< typename T >
-    // operator T&();
-
-    // virtual void accept(class Visitor& visitor) = 0;
+    virtual void accept(class Visitor& visitor) = 0;
 
     virtual ~Json() = default;
 };
 
 }// namespace json
-

@@ -31,8 +31,11 @@ void Parser< TAllocator >::parseString(char*& str)
 	char curr{file.get().peek()};
 	while(curr != '"' || neutralized)
 	{
-		if(strLen >= strCap)
-			str = alloc.get().realloc(str, strCap, strCap += BETTER_JSON_ARRAY_DEFAULT_CAPACITY);
+		if(strLen == strCap)
+        {
+			str = alloc.get().realloc(str, strCap, strCap + BETTER_JSON_ARRAY_DEFAULT_CAPACITY);
+            strCap += BETTER_JSON_ARRAY_DEFAULT_CAPACITY;
+        }
 
 		neutralized = curr == '\\';
 		str[strLen++] = curr;
@@ -40,8 +43,8 @@ void Parser< TAllocator >::parseString(char*& str)
         curr = file.get().peek();
 	}
 
-	if(strLen >= strCap)
-		str = alloc.get().realloc(str, strCap, strCap += 1);
+	if(strLen == strCap)
+		str = alloc.get().realloc(str, strCap, strCap + BETTER_JSON_ARRAY_DEFAULT_CAPACITY);
 	str[strLen] = '\0';
 
     file.get().get(); // Consume the last quote
@@ -144,10 +147,13 @@ void Parser< TAllocator >::parseObject(PrimObject& obj)
 	do
 	{
 		if(obj.size * sizeof(ObjKeyValuePair*) >= obj.capacity)
+        {
             obj.elements = alloc.get().realloc(
                 obj.elements, 
                 obj.capacity, 
-                obj.capacity += sizeof(ObjKeyValuePair*) * BETTER_JSON_ARRAY_DEFAULT_CAPACITY);
+                obj.capacity + sizeof(ObjKeyValuePair*) * BETTER_JSON_ARRAY_DEFAULT_CAPACITY);
+            obj.capacity += sizeof(ObjKeyValuePair*) * BETTER_JSON_ARRAY_DEFAULT_CAPACITY;
+        }
 
         obj.elements[obj.size] = static_cast< ObjKeyValuePair* >(alloc.get().malloc(sizeof(ObjKeyValuePair)));
 		parseObjectValue(*obj.elements[obj.size]);
@@ -181,10 +187,13 @@ void Parser< TAllocator >::parseArray(PrimArray& arr)
 	do
 	{
         if(arr.size * sizeof(PrimVariant*) >= arr.capacity)
+        {
             arr.elements = alloc.get().realloc(
                 arr.elements,
                 arr.capacity,
-                arr.capacity += sizeof(PrimVariant*) * BETTER_JSON_ARRAY_DEFAULT_CAPACITY);
+                arr.capacity + sizeof(PrimVariant*) * BETTER_JSON_ARRAY_DEFAULT_CAPACITY);
+            arr.capacity += sizeof(PrimVariant*) * BETTER_JSON_ARRAY_DEFAULT_CAPACITY;
+        }
 
         arr.elements[arr.size] = static_cast< PrimVariant* >(alloc.get().malloc(sizeof(PrimVariant)));
 		parseAnyPrim(*arr.elements[arr.size]);

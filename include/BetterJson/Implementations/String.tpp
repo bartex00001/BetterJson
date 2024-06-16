@@ -2,6 +2,7 @@
 
 #include <BetterJson/JsonTypes/String.hpp>
 #include <BetterJson/Prim.hpp>
+#include <BetterJson/Visitor.hpp>
 
 
 namespace json
@@ -44,6 +45,11 @@ String& String::operator=(const String& other)
 String& String::operator=(const char* str)
 {
     return *this = str;
+}
+
+void String::accept(Visitor& visitor)
+{
+    visitor.visit(*this);
 }
 
 }

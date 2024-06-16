@@ -1,7 +1,8 @@
 #pragma once
 
-#include <BetterJson/JsonTypes/Json.hpp>
+#include <BetterJson/JsonTypes/Bool.hpp>
 #include <BetterJson/Prim.hpp>
+#include <BetterJson/Visitor.hpp>
 
 
 namespace json
@@ -41,6 +42,11 @@ Bool& Bool::operator=(const Bool& other)
 Bool::operator bool&()
 {
     return v;
+}
+
+void Bool::accept(Visitor& visitor)
+{
+    visitor.visit(*this);
 }
 
 }

@@ -30,6 +30,8 @@
 #include <BetterJson/Implementations/Bool.tpp>
 #include <BetterJson/Implementations/Null.tpp>
 
+#include <BetterJson/Implementations/Printer.tpp>
+
 
 namespace json
 {
