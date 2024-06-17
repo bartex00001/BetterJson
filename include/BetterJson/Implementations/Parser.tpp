@@ -1,8 +1,10 @@
 #pragma once
 
 #include <cctype>
+#include <ranges>
 
 #include <BetterJson/Exceptions.hpp>
+#include <BetterJson/JsonTypes/JsonVariant.hpp>
 #include <BetterJson/Parser.hpp>
 #include <BetterJson/PrimTypes.hpp>
 
@@ -94,7 +96,7 @@ template< Allocator TAllocator >
 void Parser< TAllocator >::parseAnyPrim(PrimVariant& primVariant)
 {
 	skipWhitespace();
-	if(isdigit(file.get().peek())) // No good way for encoding this in a switch
+	if(std::isdigit(file.get().peek())) // No good way for encoding this in a switch
 	{
 		parseNumber(primVariant);
 		return;
@@ -218,7 +220,7 @@ void Parser< TAllocator >::parseString(PrimString& str)
 }
 
 template< Allocator TAllocator >
-void Parser< TAllocator >::parseInt(PrimInt& i, char buffor[], const char* end)
+void Parser< TAllocator >::parseInt(PrimInt& i, char buffor[], const char* end) const
 {
 	char* readEnd;
 	i = PrimInt{
@@ -231,7 +233,7 @@ void Parser< TAllocator >::parseInt(PrimInt& i, char buffor[], const char* end)
 }
 
 template< Allocator TAllocator >
-void Parser< TAllocator >::parseFloat(PrimFloat& f, char buffor[], const char* end)
+void Parser< TAllocator >::parseFloat(PrimFloat& f, char buffor[], const char* end) const
 {
 	char* readEnd;
 	f = PrimFloat{
@@ -244,7 +246,7 @@ void Parser< TAllocator >::parseFloat(PrimFloat& f, char buffor[], const char* e
 }
 
 template< Allocator TAllocator >
-void Parser< TAllocator >::parseBool(PrimBool& b)
+void Parser< TAllocator >::parseBool(PrimBool& b) const
 {
 	b.id = PRIM_BOOL_ID;
 
@@ -276,7 +278,7 @@ void Parser< TAllocator >::parseBool(PrimBool& b)
 }
 
 template< Allocator TAllocator >
-void Parser< TAllocator >::parseNull(PrimNull& null)
+void Parser< TAllocator >::parseNull(PrimNull& null) const
 {
 	bool isNull{file.get().consume('n')
 		&& file.get().consume('u')
@@ -298,18 +300,60 @@ Parser< TAllocator >::Parser(TAllocator& alloc, File& file)
 }
 
 template< Allocator TAllocator >
-PrimObject& Parser< TAllocator >::operator()()
+PrimVariant& Parser< TAllocator >::operator()()
 {
     if(used)
         throw std::logic_error("Parser already used for given file.");
 
     used = true;
-    PrimObject* obj{
-        static_cast< PrimObject* >(alloc.get().malloc(sizeof(PrimObject)))
+    PrimVariant* prim{
+        static_cast< PrimVariant* >(alloc.get().malloc(sizeof(PrimVariant)))
     };
 
-    parseObject(*obj);
-    return *obj;
+    parseAnyPrim(*prim);
+    return *prim;
 }
 
+template< Allocator TAllocator >
+std::shared_ptr< Json > Parser< TAllocator>::parse(File& file)
+{
+	auto allocator{std::make_shared< DefaultAllocator >(DefaultAllocator{})};
+	return JsonVariant(
+		Parser<>(*allocator, file)(),
+		allocator
+		).getJson();
 }
+
+template< Allocator TAllocator >
+std::shared_ptr< Json > Parser< TAllocator>::parse(File&& file)
+{
+	auto allocator{std::make_shared< DefaultAllocator >(DefaultAllocator{})};
+	return JsonVariant(
+		Parser<>(*allocator, file)(),
+		allocator
+		).getJson();
+}
+
+template< Allocator TAllocator >
+std::shared_ptr< Json > Parser< TAllocator>::parse(const std::string& str)
+{
+	Buffer fileBuffer(str.c_str());
+	auto allocator{std::make_shared< DefaultAllocator >(DefaultAllocator{})};
+	return JsonVariant(
+		Parser<>(*allocator, fileBuffer)(),
+		allocator
+		).getJson();
+}
+
+template< Allocator TAllocator >
+std::shared_ptr< Json > Parser< TAllocator>::parse(std::istream& stream)
+{
+	FileStream fileStream(stream);
+	auto allocator{std::make_shared< DefaultAllocator >(DefaultAllocator{})};
+	return JsonVariant(
+		Parser<>(*allocator, fileStream)(),
+		allocator
+		).getJson();
+}
+
+}//namespace json

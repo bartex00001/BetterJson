@@ -1,4 +1,7 @@
+#pragma once
+
 #include <BetterJson/Exceptions.hpp>
+
 
 namespace json
 {
@@ -15,4 +18,4 @@ inline const char* SyntaxError::what() const noexcept
 	return message.c_str();
 }
 
-}
+}//namespace json

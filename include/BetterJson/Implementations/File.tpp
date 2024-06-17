@@ -1,4 +1,7 @@
+#pragma once
+
 #include <BetterJson/File.hpp>
+#include <BetterJson/Definitions.hpp>
 
 
 namespace json
@@ -15,13 +18,12 @@ inline bool File::consume(const char expected)
 	return false;
 }
 
-
-inline char FileBuffer::peek() const
+inline char Buffer::peek() const
 {
 	return *buffer;
 }
 
-inline char FileBuffer::get()
+inline char Buffer::get()
 {
 	if(*buffer == '\n') [[unlikely]]
 	{
@@ -32,12 +34,12 @@ inline char FileBuffer::get()
 	return *(buffer++);
 }
 
-inline std::size_t FileBuffer::getLineNumber() const
+inline std::size_t Buffer::getLineNumber() const
 {
 	return lineNumber;
 }
 
-inline std::string FileBuffer::getLine()
+inline std::string Buffer::getLine()
 {
 	std::string res{};
 	res.reserve(buffer - lineStart + 1);
@@ -47,7 +49,7 @@ inline std::string FileBuffer::getLine()
 	return res;
 }
 
-inline FileBuffer::FileBuffer(const char* str)
+inline Buffer::Buffer(const char* str)
 	: lineStart(str),
 	  buffer(str)
 {
@@ -79,7 +81,7 @@ inline std::size_t FileStream::getLineNumber() const
 
 inline std::string FileStream::getLine()
 {
-	return std::string(lineBuff);
+	return {lineBuff};
 }
 
 inline FileStream::FileStream(const std::string& fileName)
@@ -106,5 +108,4 @@ inline FileStream::~FileStream()
 		fileStream.value().close();
 }
 
-
-}
+}//namespace json

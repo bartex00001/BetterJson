@@ -2,6 +2,7 @@
 
 #include <cstring>
 
+#include <BetterJson/Definitions.hpp>
 #include <BetterJson/MemoryPool.hpp>
 
 
@@ -74,7 +75,7 @@ MemoryPool< TAllocator >::~MemoryPool() noexcept
 }
 
 template< Allocator TAllocator >
-MemoryPool< TAllocator >::MemoryPool(MemoryPool&& mp)
+MemoryPool< TAllocator >::MemoryPool(MemoryPool&& mp) noexcept
 {
 	this->first = mp.first;
 	this->last = mp.last;
@@ -84,9 +85,9 @@ MemoryPool< TAllocator >::MemoryPool(MemoryPool&& mp)
 
 
 template< Allocator TAllocator >
-MemoryPool< TAllocator >& MemoryPool< TAllocator >::operator=(MemoryPool&& mp)
+MemoryPool< TAllocator >& MemoryPool< TAllocator >::operator=(MemoryPool&& mp) noexcept
 {
-	ChunkHeader* temp;
+	ChunkHeader* temp{};
 	while((temp = this->first) != nullptr)
 	{
 		this->first = this->first->next;

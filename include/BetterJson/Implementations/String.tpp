@@ -8,12 +8,16 @@
 namespace json
 {
 
-String::String(const std::string& str)
+inline String::String(const std::string& str)
     : std::string(str)
 {}
 
-String::String(const String& other)
+inline String::String(const String& other)
     : std::string(other)
+{}
+
+inline String::String(String&& other) noexcept
+    : std::string(std::move(other))
 {}
 
 template< Allocator TAllocator >
@@ -26,30 +30,15 @@ String::String(std::shared_ptr< TAllocator > alloc, PrimString& prim)
     alloc->free(&prim);
 }
 
-std::string& String::value()
+inline std::string& String::value()
 {
     return *this;
 }
 
-std::string& String::operator=(const std::string& str)
-{
-    return *this = str;
-}
 
-String& String::operator=(const String& other)
-{
-    *this = other;
-    return *this;
-}
-
-String& String::operator=(const char* str)
-{
-    return *this = str;
-}
-
-void String::accept(Visitor& visitor)
+inline void String::accept(Visitor& visitor)
 {
     visitor.visit(*this);
 }
 
-}
+}//namespace json

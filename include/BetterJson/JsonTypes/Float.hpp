@@ -14,6 +14,7 @@ public:
     Float() = default;
     Float(long double val);
     Float(const Float& other);
+    Float(Float&& other) noexcept;
 
     template< Allocator TAllocator >
     Float(std::shared_ptr< TAllocator > alloc, PrimFloat& prim);
@@ -21,12 +22,12 @@ public:
     long double& value();
 
     long double& operator=(long double val);
-
     Float& operator=(const Float& other);
+    Float& operator=(Float&& other) noexcept;
 
     operator long double&();
 
-    void accept(class Visitor& visitor);
+    void accept(class Visitor& visitor) override;
 };
 
-}
+}//namespace json

@@ -6,18 +6,18 @@
 namespace json
 {
 
-Printer::Printer(unsigned indent)
+inline Printer::Printer(unsigned indent)
     : indent(indent)
 {}
 
-std::string Printer::operator()(Json& json)
+inline std::string Printer::operator()(Json& json)
 {
     buff.clear();
     json.accept(*this);
     return buff;
 }
 
-void Printer::printIndent()
+inline void Printer::printIndent()
 {
     if(indent.has_value())
     {
@@ -33,7 +33,7 @@ void Printer::printIndent()
     }
 }
 
-void Printer::printMultilineObject(Object& obj)
+inline void Printer::printMultilineObject(Object& obj)
 {
     for(auto it: obj)
     {
@@ -50,7 +50,7 @@ void Printer::printMultilineObject(Object& obj)
     buff.pop_back();
 }
 
-void Printer::printMultilineArray(Array& arr)
+inline void Printer::printMultilineArray(Array& arr)
 {
     for(auto& elem: arr)
     {
@@ -64,7 +64,7 @@ void Printer::printMultilineArray(Array& arr)
 }
 
 
-void Printer::visit(Object& obj)
+inline void Printer::visit(Object& obj)
 {
     buff += "{";
 
@@ -83,7 +83,7 @@ void Printer::visit(Object& obj)
     buff += "}";
 }
 
-void Printer::visit(Array& arr)
+inline void Printer::visit(Array& arr)
 {
     buff += "[";
 
@@ -102,29 +102,29 @@ void Printer::visit(Array& arr)
     buff += "]";
 }
 
-void Printer::visit(String& str)
+inline void Printer::visit(String& str)
 {
     buff += '"';
     buff += str.value();
     buff += '"';
 }
 
-void Printer::visit(Float& f)
+inline void Printer::visit(Float& f)
 {
     buff += std::to_string(f.value());
 }
 
-void Printer::visit(Int& i)
+inline void Printer::visit(Int& i)
 {
     buff += std::to_string(i.value());
 }
 
-void Printer::visit(Bool& b)
+inline void Printer::visit(Bool& b)
 {
     buff += b.value() ? "true" : "false";
 }
 
-void Printer::visit(Null& null)
+inline void Printer::visit(Null& null [[maybe_unused]])
 {
     buff += "null";
 }

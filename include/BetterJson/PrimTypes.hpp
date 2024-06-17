@@ -2,7 +2,6 @@
 
 #include <cstdint>
 
-#define BETTER_JSON_ARRAY_DEFAULT_CAPACITY 8
 
 namespace json
 {

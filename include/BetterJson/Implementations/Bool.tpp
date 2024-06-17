@@ -8,11 +8,15 @@
 namespace json
 {
 
-Bool::Bool(bool val)
+inline Bool::Bool(bool val)
     : v(val)
 {}
 
-Bool::Bool(const Bool& other)
+inline Bool::Bool(const Bool& other)
+    : v(other.v)
+{}
+
+inline Bool::Bool(Bool&& other) noexcept
     : v(other.v)
 {}
 
@@ -23,30 +27,36 @@ Bool::Bool(std::shared_ptr< TAllocator > alloc, PrimBool& prim)
     alloc->free(&prim);
 }
 
-bool& Bool::value()
+inline bool& Bool::value()
 {
     return v;
 }
 
-bool& Bool::operator=(bool val)
+inline bool& Bool::operator=(bool val)
 {
     return v = val;
 }
 
-Bool& Bool::operator=(const Bool& other)
+inline Bool& Bool::operator=(const Bool& other)
 {
     v = other.v;
     return *this;
 }
 
-Bool::operator bool&()
+inline Bool& Bool::operator=(Bool&& other) noexcept
+{
+    v = other.v;
+    return *this;
+}
+
+inline Bool::operator bool&()
 {
     return v;
 }
 
-void Bool::accept(Visitor& visitor)
+inline void Bool::accept(Visitor& visitor)
 {
     visitor.visit(*this);
 }
 
-}
+}//namespace json

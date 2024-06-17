@@ -2,19 +2,28 @@
 
 #include <BetterJson/JsonTypes/JsonVariant.hpp>
 
-#include <BetterJson/JsonTypes/Null.hpp>
 #include <BetterJson/JsonTypes/Array.hpp>
-#include <BetterJson/JsonTypes/Object.hpp>
 #include <BetterJson/JsonTypes/Bool.hpp>
 #include <BetterJson/JsonTypes/Float.hpp>
 #include <BetterJson/JsonTypes/Int.hpp>
+#include <BetterJson/JsonTypes/Null.hpp>
+#include <BetterJson/JsonTypes/Object.hpp>
 #include <BetterJson/JsonTypes/String.hpp>
 
 
 namespace json
 {
 
-std::shared_ptr< Json > JsonVariant::getJson()
+inline JsonVariant::JsonVariant(PrimVariant& primVariant, std::shared_ptr< DefaultAllocator > alloc)
+	: json(primVariant),
+      allocator(alloc)
+{}
+
+inline JsonVariant::JsonVariant(std::shared_ptr< Json > jsonType)
+	: json(jsonType)
+{}
+
+inline std::shared_ptr< Json > JsonVariant::getJson()
 {
 	if(std::holds_alternative< std::shared_ptr< Json > >(json))
 		return std::get< std::shared_ptr< Json > >(json);
@@ -50,4 +59,4 @@ std::shared_ptr< Json > JsonVariant::getJson()
     return std::get< std::shared_ptr< Json > >(json);
 }
 
-}
+}//namespace json

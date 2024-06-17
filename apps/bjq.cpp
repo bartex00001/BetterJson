@@ -1,19 +1,15 @@
 #include <iostream>
+#include <unordered_map>
 
 #include <BetterJson/json.hpp>
 
-
-
 int main()
 {
-    try
-    {
-        auto json = json::parse(json::FileStream(std::cin));
-        std::cout << *json << std::endl;
-    }
-    catch(const std::exception& e)
-    {
-        std::cerr << e.what() << '\n';
-    }
+	json::Object obj;
+	obj.emplace("abc", json::Int(2));
+	obj["abc"].as< json::Int >() = 3;
+	obj["key"];
+
+	std::cout << obj;
 }
 

@@ -8,11 +8,15 @@
 namespace json
 {
 
-Float::Float(long double val)
+inline Float::Float(long double val)
     : v(val)
 {}
 
-Float::Float(const Float& other)
+inline Float::Float(const Float& other)
+    : v(other.v)
+{}
+
+inline Float::Float(Float&& other) noexcept
     : v(other.v)
 {}
 
@@ -23,30 +27,36 @@ Float::Float(std::shared_ptr< TAllocator > alloc, PrimFloat& prim)
     alloc->free(&prim);
 }
 
-long double& Float::value()
+inline long double& Float::value()
 {
     return v;
 }
 
-long double& Float::operator=(long double val)
+inline long double& Float::operator=(long double val)
 {
     return v = val;
 }
 
-Float& Float::operator=(const Float& other)
+inline Float& Float::operator=(const Float& other)
 {
     v = other.v;
     return *this;
 }
 
-Float::operator long double&() 
+inline Float& Float::operator=(Float&& other) noexcept
+{
+    v = other.v;
+    return *this;
+}
+
+inline Float::operator long double&()
 {
     return v;
 }
 
-void Float::accept(Visitor& visitor)
+inline void Float::accept(Visitor& visitor)
 {
     visitor.visit(*this);
 }
 
-}
+}//namespace json

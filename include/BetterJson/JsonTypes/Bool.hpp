@@ -14,6 +14,7 @@ public:
     Bool() = default;
     Bool(bool val);
     Bool(const Bool& other);
+    Bool(Bool&& other) noexcept;
 
     template< Allocator TAllocator >
     Bool(std::shared_ptr< TAllocator > alloc, PrimBool& prim);
@@ -22,10 +23,11 @@ public:
     
     bool& operator=(bool val);
     Bool& operator=(const Bool& other);
+    Bool& operator=(Bool&& other) noexcept;
 
     operator bool&();
 
-    void accept(class Visitor& visitor);
+    void accept(class Visitor& visitor) override;
 };
 
-}
+}//namespace json

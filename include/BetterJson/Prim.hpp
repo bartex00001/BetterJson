@@ -20,8 +20,7 @@ union PrimVariant
 struct ObjKeyValuePair
 {
 	char* key{};
-	PrimVariant* value;
+	PrimVariant* value{};
 };
 
 } // namespace json
-

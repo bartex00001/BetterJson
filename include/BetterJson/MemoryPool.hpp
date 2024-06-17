@@ -1,17 +1,8 @@
 #pragma once
 
-#include <optional>
+#include <cstdint>
 
 #include <BetterJson/Allocator.hpp>
-
-
-#ifndef BETTER_JSON_CHUNK_SIZE
-#define BETTER_JSON_CHUNK_SIZE 4096
-#endif
-
-#if BETTER_JSON_CHUNK_SIZE < 128
-#error "BETTER_JSON_CHUNK_SIZE must be at least 128 bytes long"
-#endif
 
 
 namespace json
@@ -46,8 +37,8 @@ public:
 	MemoryPool(const MemoryPool& mp) = delete;
 	MemoryPool operator=(const MemoryPool& mp) = delete;
 
-	MemoryPool(MemoryPool&& mp);
-	MemoryPool& operator=(MemoryPool&& mp);
+	MemoryPool(MemoryPool&& mp) noexcept;
+	MemoryPool& operator=(MemoryPool&& mp) noexcept;
 
 	static void free(auto* addr);
 
@@ -59,7 +50,3 @@ public:
 };
 
 }// namespace json
-
-
-// Include template implementation
-#include <BetterJson/Implementations/MemoryPool.tpp>

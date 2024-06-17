@@ -25,29 +25,31 @@ public:
     template< Allocator TAllocator >
     Object(std::shared_ptr< TAllocator > alloc,  PrimObject& prim);
     Object(const Object& other);
-    Object(Object&& other);
+    Object(Object&& other) noexcept;
 
     Object& operator=(const Object& other);
-    Object& operator=(Object&& other);
+    Object& operator=(Object&& other) noexcept;
     Object& operator=(const std::unordered_map< std::string, std::shared_ptr< Json > >& map);
     Json& operator[](const std::string& key);
 
-    void accept(class Visitor& visitor);
+    void accept(class Visitor& visitor) override;
 
     std::size_t size() const;
 
     template< typename T >
-    void push_back(const std::string& key, const T& value);
+    void emplace(const std::string& key, const T& value);
 
     template< typename T >
-    void push_back(const std::string& key, T&& value);
+    void emplace(const std::string& key, T&& value);
 
-    void push_back(const std::string& key, const std::shared_ptr< Json >& value);
+    void emplace(const std::string& key, const std::shared_ptr< Json >& value);
 
     void erase(const std::string& key);
 
     bool contains(const std::string& key) const;
     std::optional< std::shared_ptr< Json > > getOpt(const std::string& key);
+
+    void clear();
 
     iterator begin();
     iterator end();
@@ -78,4 +80,4 @@ public:
     friend bool operator==(const ObjectIterator& a, const ObjectIterator& b);
 };
 
-}
+}//namespace json

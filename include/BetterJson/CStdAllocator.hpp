@@ -20,4 +20,5 @@ public:
 
 }// namespace json
 
+// Include template implementation
 #include <BetterJson/Implementations/CStdAllocator.tpp>

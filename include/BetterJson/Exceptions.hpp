@@ -20,7 +20,8 @@ protected:
 public:
 	SyntaxError(File& buffer) noexcept;
 
+	[[nodiscard]]
 	const char* what() const noexcept override;
 };
 
-}
+}//namespace json

@@ -10,8 +10,8 @@ namespace json
 
 class Printer : public Visitor
 {
-    std::optional< unsigned > indent{};
-    std::string buff{};
+    std::optional< unsigned > indent;
+    std::string buff;
 
     unsigned level{};
 
@@ -37,4 +37,4 @@ public:
 
 inline std::ostream& operator<<(std::ostream& os, Json& json);
 
-}
+}//namespace json

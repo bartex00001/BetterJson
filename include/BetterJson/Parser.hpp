@@ -1,15 +1,15 @@
 #pragma once
 
-#include <BetterJson/Prim.hpp>
 #include <BetterJson/Allocator.hpp>
 #include <BetterJson/File.hpp>
-#include <BetterJson/JsonTypes/Json.hpp>    
+#include <BetterJson/JsonTypes/Json.hpp>
+#include <BetterJson/Prim.hpp>
 
 
 namespace json
 {
 
-template< Allocator TAllocator = DEFAULT_ALLOCATOR>
+template< Allocator TAllocator = DefaultAllocator >
 class Parser
 {
 	std::reference_wrapper< TAllocator > alloc;
@@ -27,14 +27,19 @@ class Parser
 	void parseObject(PrimObject& obj);
 	void parseArray(PrimArray& arr);
 	void parseString(PrimString& str);
-	void parseInt(PrimInt& i, char buffor[], const char* end);
-	void parseFloat(PrimFloat& f, char buffor[], const char* end);
-	void parseBool(PrimBool& b);
-	void parseNull(PrimNull& null);
+	void parseInt(PrimInt& i, char buffor[], const char* end) const;
+	void parseFloat(PrimFloat& f, char buffor[], const char* end) const;
+	void parseBool(PrimBool& b) const;
+	void parseNull(PrimNull& null) const;
 
 public:
 	Parser(TAllocator& alloc, File& file);
-    PrimObject& operator()();
+    PrimVariant& operator()();
+
+	static std::shared_ptr< Json > parse(File& file);
+	static std::shared_ptr< Json > parse(File&& file);
+	static std::shared_ptr< Json > parse(const std::string& str);
+	static std::shared_ptr< Json > parse(std::istream& stream);
 };
 
-}
+}//namespace json

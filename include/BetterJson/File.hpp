@@ -7,45 +7,47 @@
 #include <optional>
 #include <string>
 
-#ifndef BETTER_JSON_LINE_BUFFER_SIZE
-#define BETTER_JSON_LINE_BUFFER_SIZE 128
-#endif
-
 
 namespace json
 {
 
 class File {
 public:
+	virtual ~File() = default;
+
+	[[nodiscard]]
 	virtual char peek() const = 0;
 	virtual char get() = 0;
-	bool consume(const char expected);
+	bool consume(char expected);
 
+	[[nodiscard]]
 	virtual std::size_t getLineNumber() const = 0;
 	virtual std::string getLine() = 0;
 };
 
 
-class FileBuffer final : public File
+class Buffer final : public File
 {
 	const char* lineStart{};
 	const char* buffer{};
 	std::size_t lineNumber{1};
 
 public:
+	[[nodiscard]]
 	char peek() const override;
 	char get() override;
 
+	[[nodiscard]]
 	std::size_t getLineNumber() const override;
 	std::string getLine() override;
 
-	FileBuffer(const char* str);
+	Buffer(const char* str);
 };
 
 
 class FileStream final : public File
 {
-	std::string lineBuff{};
+	std::string lineBuff;
 	std::size_t linePos{};
 	std::size_t lineNumber{1};
 
@@ -62,7 +64,7 @@ public:
 	FileStream(const std::string& fileName);
 	FileStream(std::istream& stream);
 
-	~FileStream();
+	~FileStream() override;
 };
 
-}
+}//namespace json

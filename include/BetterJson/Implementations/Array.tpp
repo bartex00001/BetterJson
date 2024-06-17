@@ -19,41 +19,41 @@ Array::Array(std::shared_ptr< TAllocator > alloc, PrimArray& prim)
     alloc->free(&prim);
 }
 
-Array::Array(const Array& other)
+inline Array::Array(const Array& other)
     : data(other.data)
 {}
 
-Array::Array(Array&& other)
+inline Array::Array(Array&& other) noexcept
     : data(std::move(other.data))
 {}
 
-Array& Array::operator=(const Array& other)
+inline Array& Array::operator=(const Array& other)
 {
     data = other.data;
     return *this;
 }
 
-Array& Array::operator=(Array&& other)
+inline Array& Array::operator=(Array&& other) noexcept
 {
     data = std::move(other.data);
     return *this;
 }
 
-Array& Array::operator=(const std::vector< std::shared_ptr< Json > >& vec)
+inline Array& Array::operator=(const std::vector< std::shared_ptr< Json > >& vec)
 {
     data.clear();
-    for(auto& elem : vec)
-        data.push_back(JsonVariant(elem));
+    for(const auto& elem : vec)
+        data.emplace_back(elem);
 
     return *this;
 }
 
-Json& Array::operator[](std::size_t inx)
+inline Json& Array::operator[](std::size_t inx)
 {
     return *data[inx].getJson();
 }
 
-std::size_t Array::size() const
+inline std::size_t Array::size() const
 {
     return data.size();
 }
@@ -70,67 +70,67 @@ void Array::push_back(T&& elem)
     data.push_back(JsonVariant(std::make_shared< T >(std::forward<T>(elem))));
 }
 
-void Array::push_back(const std::shared_ptr< Json >& elem)
+inline void Array::push_back(const std::shared_ptr< Json >& elem)
 {
-    data.push_back(JsonVariant(elem));
+    data.emplace_back(elem);
 }
 
-void Array::pop_back()
+inline void Array::pop_back()
 {
     data.pop_back();
 }
 
-void Array::accept(Visitor& visitor)
+inline void Array::accept(Visitor& visitor)
 {
     visitor.visit(*this);
 }
 
-Array::iterator Array::begin()
+inline Array::iterator Array::begin()
 {
-    return ArrayIterator(*this);
+    return {*this};
 }
 
-Array::iterator Array::end()
+inline Array::iterator Array::end()
 {
-    return ArrayIterator(*this, data.size());
+    return {*this, data.size()};
 }
 
 
-ArrayIterator::ArrayIterator(Array& arr, std::size_t inx)
+inline ArrayIterator::ArrayIterator(Array& arr, std::size_t inx)
     : arr(arr), inx(inx)
 {}
 
-Json& ArrayIterator::operator*()
+inline Json& ArrayIterator::operator*() const
 {
     return *arr.data[inx].getJson();
 }
 
-Json* ArrayIterator::operator->()
+inline Json* ArrayIterator::operator->() const
 {
     return arr.data[inx].getJson().get();
 }
 
-ArrayIterator& ArrayIterator::operator++()
+inline ArrayIterator& ArrayIterator::operator++()
 {
     ++inx;
     return *this;
 }
 
-ArrayIterator ArrayIterator::operator++(int)
+inline ArrayIterator ArrayIterator::operator++(int)
 {
     ArrayIterator temp(*this);
     ++inx;
     return temp;
 }
 
-bool operator==(const ArrayIterator& a, const ArrayIterator& b)
+inline bool operator==(const ArrayIterator& a, const ArrayIterator& b)
 {
     return a.inx == b.inx;
 }
 
-bool operator!=(const ArrayIterator& a, const ArrayIterator& b)
+inline bool operator!=(const ArrayIterator& a, const ArrayIterator& b)
 {
     return a.inx != b.inx;
 }
 
-}
+}//namespace json

@@ -1,6 +1,8 @@
+#pragma once
+
 #include <cstdlib>
-#include <new>
 #include <iostream>
+#include <new>
 
 #include <BetterJson/CStdAllocator.hpp>
 
@@ -8,7 +10,7 @@
 namespace json
 {
 
-inline void CStdAllocator::free(auto* addr) noexcept
+void CStdAllocator::free(auto* addr) noexcept
 {
 	std::free(addr);
 }
@@ -22,7 +24,7 @@ inline void* CStdAllocator::malloc(std::size_t n)
 	return res;
 }
 
-inline auto* CStdAllocator::realloc(auto* addr, std::size_t oldSize, std::size_t newSize)
+auto* CStdAllocator::realloc(auto* addr, std::size_t oldSize [[maybe_unused]], std::size_t newSize)
 {
 	void* res{std::realloc(addr, newSize)};
 	if(res == nullptr) [[unlikely]]

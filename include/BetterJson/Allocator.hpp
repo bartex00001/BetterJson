@@ -2,6 +2,7 @@
 
 #include <utility>
 
+
 template< typename T >
 concept Allocator = requires(T& allocator)
 {
@@ -17,3 +18,17 @@ concept Allocator = requires(T& allocator)
 	{ T(std::move(std::declval< T >())) };
 	{ std::declval< T >() = std::move(std::declval< T >()) } -> std::same_as< T& >;
 };
+
+
+#include <BetterJson/MemoryPool.hpp>
+#include <BetterJson/CStdAllocator.hpp>
+
+namespace json
+{
+
+using DefaultAllocator = MemoryPool< CStdAllocator >;
+
+static_assert(Allocator< CStdAllocator >);
+static_assert(Allocator< MemoryPool< CStdAllocator > >);
+
+}//namespace json

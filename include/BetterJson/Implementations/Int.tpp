@@ -8,11 +8,15 @@
 namespace json
 {
 
-Int::Int(long long val)
+inline Int::Int(long long val)
     : v(val)
 {}
 
-Int::Int(const Int& other)
+inline Int::Int(const Int& other)
+    : v(other.v)
+{}
+
+inline Int::Int(Int&& other) noexcept
     : v(other.v)
 {}
 
@@ -23,30 +27,36 @@ Int::Int(std::shared_ptr< TAllocator > alloc, PrimInt& prim)
     alloc->free(&prim);
 }
 
-long long& Int::value()
+inline long long& Int::value()
 {
     return v;
 }
 
-long long& Int::operator=(long long val)
+inline long long& Int::operator=(long long val)
 {
     return v = val;
 }
 
-Int& Int::operator=(const Int& other)
+inline Int& Int::operator=(const Int& other)
 {
     v = other.v;
     return *this;
 }
 
-Int::operator long long&() 
+inline Int& Int::operator=(Int&& other) noexcept
+{
+    v = other.v;
+    return *this;
+}
+
+inline Int::operator long long&()
 {
     return v;
 }
 
-void Int::accept(Visitor& visitor)
+inline void Int::accept(Visitor& visitor)
 {
     visitor.visit(*this);
 }
 
-}
+}//namespace json

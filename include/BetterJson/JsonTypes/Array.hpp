@@ -1,8 +1,7 @@
 #pragma once
 
-#include <vector>
-#include <optional>
 #include <memory>
+#include <vector>
 
 #include <BetterJson/JsonTypes/Json.hpp>
 #include <BetterJson/JsonTypes/JsonVariant.hpp>
@@ -15,7 +14,7 @@ class ArrayIterator;
 
 class Array : public Json
 {
-    std::vector< JsonVariant > data{};
+    std::vector< JsonVariant > data;
 
 public:
     using iterator = ArrayIterator;
@@ -26,14 +25,15 @@ public:
     template< Allocator TAllocator >
     Array(std::shared_ptr< TAllocator > alloc, PrimArray& prim);
     Array(const Array& other);
-    Array(Array&& other);
+    Array(Array&& other) noexcept;
 
     Array& operator=(const Array& other);
-    Array& operator=(Array&& other);
+    Array& operator=(Array&& other) noexcept;
     Array& operator=(const std::vector< std::shared_ptr< Json > >& vec);
 
     Json& operator[](std::size_t inx);
 
+    [[nodiscard]]
     std::size_t size() const;
 
     template< typename T >
@@ -46,7 +46,7 @@ public:
 
     void pop_back();
 
-    void accept(class Visitor& visitor);
+    void accept(class Visitor& visitor) override;
 
     iterator begin();
     iterator end();
@@ -67,8 +67,8 @@ public:
 
     ArrayIterator(Array& arr, std::size_t inx = 0);
 
-    reference operator*();
-    pointer operator->();
+    reference operator*() const;
+    pointer operator->() const;
 
     ArrayIterator& operator++();
     ArrayIterator operator++(int);
@@ -77,4 +77,4 @@ public:
     friend bool operator==(const ArrayIterator& a, const ArrayIterator& b);
 };
 
-}
+}//namespace json

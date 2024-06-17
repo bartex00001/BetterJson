@@ -4,6 +4,7 @@
 #include <BetterJson/Prim.hpp>
 #include <BetterJson/Visitor.hpp>
 
+
 namespace json
 {
 
@@ -22,73 +23,76 @@ Object::Object(std::shared_ptr< TAllocator > alloc,  PrimObject& prim)
     alloc->free(&prim);
 }
 
-Object::Object(const Object& other)
+inline Object::Object(const Object& other)
     : data(other.data)
 {}
 
-Object::Object(Object&& other)
+inline Object::Object(Object&& other) noexcept
     : data(std::move(other.data))
 {}
 
-Object& Object::operator=(const Object& other)
+inline Object& Object::operator=(const Object& other)
 {
     data = other.data;
     return *this;
 }
 
-Object& Object::operator=(Object&& other)
+inline Object& Object::operator=(Object&& other) noexcept
 {
     data = std::move(other.data);
     return *this;
 }
 
-Object& Object::operator=(const std::unordered_map< std::string, std::shared_ptr< Json > >& map)
+inline Object& Object::operator=(const std::unordered_map< std::string, std::shared_ptr< Json > >& map)
 {
     data.clear();
-    for(auto& [key, value] : map)
+    for(const auto& [key, value] : map)
         data.emplace(key, JsonVariant(value));
 
     return *this;
 }
 
-Json& Object::operator[](const std::string& key)
+inline Json& Object::operator[](const std::string& key)
 {
+    if(!contains(key))
+        emplace(key, json::Null());
+
     return *data[key].getJson();
 }
 
-std::size_t Object::size() const
+inline std::size_t Object::size() const
 {
     return data.size();
 }
 
 template< typename T >
-void Object::push_back(const std::string& key, const T& value)
+void Object::emplace(const std::string& key, const T& value)
 {
     data.emplace(key, JsonVariant(std::make_shared< T >(value)));
 }
 
 template< typename T >
-void Object::push_back(const std::string& key, T&& value)
+void Object::emplace(const std::string& key, T&& value)
 {
     data.emplace(key, JsonVariant(std::make_shared< T >(std::forward<T>(value))));
 }
 
-void Object::push_back(const std::string& key, const std::shared_ptr< Json >& value)
+inline void Object::emplace(const std::string& key, const std::shared_ptr< Json >& value)
 {
     data.emplace(key, JsonVariant(value));
 }
 
-void Object::erase(const std::string& key)
+inline void Object::erase(const std::string& key)
 {
     data.erase(key);
 }
 
-bool Object::contains(const std::string& key) const
+inline bool Object::contains(const std::string& key) const
 {
     return data.contains(key);
 }
 
-std::optional< std::shared_ptr< Json > > Object::getOpt(const std::string& key)
+inline std::optional< std::shared_ptr< Json > > Object::getOpt(const std::string& key)
 {
     if(!contains(key))
         return std::nullopt;
@@ -96,57 +100,63 @@ std::optional< std::shared_ptr< Json > > Object::getOpt(const std::string& key)
     return data[key].getJson();
 }
 
-void Object::accept(Visitor& visitor)
+inline void Object::accept(Visitor& visitor)
 {
     visitor.visit(*this);
 }
 
-Object::iterator Object::begin()
+inline void Object::clear()
 {
-    return iterator(*this, data.begin());
-}
-
-Object::iterator Object::end()
-{
-    return iterator(*this, data.end());
+	data.clear();
 }
 
 
-ObjectIterator::ObjectIterator(Object& obj, std::unordered_map< std::string, JsonVariant >::iterator it)
+inline Object::iterator Object::begin()
+{
+    return {*this, data.begin()};
+}
+
+inline Object::iterator Object::end()
+{
+    return {*this, data.end()};
+}
+
+
+inline ObjectIterator::ObjectIterator(Object& obj, std::unordered_map< std::string, JsonVariant >::iterator it)
     : obj(obj), it(it)
 {}
 
-std::pair< std::string, Json& > ObjectIterator::operator*()
+inline std::pair< std::string, Json& > ObjectIterator::operator*()
 {
     return {it->first, *it->second.getJson()};
 }
 
-Json* ObjectIterator::operator->()
+inline Json* ObjectIterator::operator->()
 {
     return it->second.getJson().get();
 }
 
-ObjectIterator& ObjectIterator::operator++()
+inline ObjectIterator& ObjectIterator::operator++()
 {
     ++it;
     return *this;
 }
 
-ObjectIterator ObjectIterator::operator++(int)
+inline ObjectIterator ObjectIterator::operator++(int)
 {
     ObjectIterator temp(*this);
     ++it;
     return temp;
 }
 
-bool operator==(const ObjectIterator& a, const ObjectIterator& b)
+inline bool operator==(const ObjectIterator& a, const ObjectIterator& b)
 {
     return a.it == b.it;
 }
 
-bool operator!=(const ObjectIterator& a, const ObjectIterator& b)
+inline bool operator!=(const ObjectIterator& a, const ObjectIterator& b)
 {
     return a.it != b.it;
 }
 
-}
+}//namespace json
