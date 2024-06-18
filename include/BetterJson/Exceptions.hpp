@@ -11,10 +11,6 @@ namespace json
 
 class SyntaxError : public std::exception
 {
-protected:
-	std::string line;
-	std::size_t lineNumber;
-
     std::string message;
 
 public:

@@ -7,12 +7,8 @@
 int main()
 {
 	json::Object obj;
-	obj.emplace("abc", json::Int(2));
-	obj["abc"].as< json::Int >() = 3;
-	obj["key"];
-
-	auto sBool{std::make_shared< json::Bool >(true)};
-	obj.emplace("someBool", sBool);
+	obj.emplace("abc", json::Int(123));
+	obj["abc"] = json::Int(321);
 
 	std::cout << obj;
 }

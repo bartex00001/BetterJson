@@ -20,13 +20,13 @@ inline std::shared_ptr< Json > SharedCreator::operator()(Json&& json)
 	return std::move(shared);
 }
 
-#define SHARED_CREATOR_METHOD(type)                                      \
-	inline void SharedCreator::visit(type& value)                        \
- 	{                                                                    \
-    	if(isMovable)                                                    \
-        	shared = std::make_shared< type >(std::move(value)) ;        \
-		else                                                             \
-            shared = std::make_shared< type >(value);                    \
+#define SHARED_CREATOR_METHOD(type)                              \
+	inline void SharedCreator::visit(type& value)                \
+ 	{                                                            \
+    	if(isMovable)                                            \
+        	shared = std::make_shared< type >(std::move(value)); \
+		else                                                     \
+            shared = std::make_shared< type >(value);            \
 	}
 
 SHARED_CREATOR_METHOD(Object)

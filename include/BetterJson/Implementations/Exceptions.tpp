@@ -7,10 +7,11 @@ namespace json
 {
 
 inline SyntaxError::SyntaxError(File& buffer) noexcept
-	: line(buffer.getLine()),
-	  lineNumber(buffer.getLineNumber())
 {
-    message = "Syntax error at line\n" + std::to_string(lineNumber) + "\t| " + line;
+    message =
+		"Syntax error at line\n"
+		+ std::to_string(buffer.getLineNumber())
+		+ "\t| " + buffer.getLine();
 }
 
 inline const char* SyntaxError::what() const noexcept
