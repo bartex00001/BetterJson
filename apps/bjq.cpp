@@ -6,9 +6,6 @@
 
 int main()
 {
-	json::Object obj;
-	obj.emplace("abc", json::Int(123));
-	obj["abc"] = json::Int(321);
-
-	std::cout << obj;
+	auto json{json::Parser<>::parse(std::cin)};
+	std::cout << *json;
 }

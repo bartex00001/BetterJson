@@ -3,7 +3,7 @@
 #include <cctype>
 #include <ranges>
 
-#include <BetterJson/Exceptions.hpp>
+#include <BetterJson/ParserExceptions.hpp>
 #include <BetterJson/JsonTypes/JsonVariant.hpp>
 #include <BetterJson/Parser.hpp>
 #include <BetterJson/PrimTypes.hpp>
@@ -24,14 +24,14 @@ void Parser< TAllocator >::parseString(char*& str)
 {
 	skipWhitespace();
 	if(!file.get().consume('"'))
-		throw SyntaxError(file);
+		throw SyntaxError::expectedCharacters(file.get(), "\"", "at the start of a string");
 
 	std::size_t strLen{};
 	std::size_t strCap{};
 
 	bool neutralized{};
 	char curr{file.get().peek()};
-	while(curr != '"' || neutralized)
+	while((curr != '"' || neutralized) && curr != '\0' && curr != EOF)
 	{
 		if(strLen == strCap)
         {
@@ -47,9 +47,10 @@ void Parser< TAllocator >::parseString(char*& str)
 
 	if(strLen == strCap)
 		str = alloc.get().realloc(str, strCap, strCap + BETTER_JSON_ARRAY_DEFAULT_CAPACITY);
-	str[strLen] = '\0';
 
-    file.get().get(); // Consume the last quote
+	str[strLen] = '\0';
+    if(!file.get().consume('"'))
+    	throw SyntaxError::expectedCharacters(file.get(), "\"", "at the end of a string");
 }
 
 template< Allocator TAllocator >
@@ -59,7 +60,7 @@ void Parser< TAllocator >::parseObjectValue(ObjKeyValuePair& objKeyVal)
 
     skipWhitespace();
     if(!file.get().consume(':'))
-        throw SyntaxError(file);
+        throw SyntaxError::expectedCharacters(file.get(), ":", "between object key and value");
 
 	objKeyVal.value = static_cast< PrimVariant* >(alloc.get().malloc(sizeof(PrimVariant)));
 	parseAnyPrim(*objKeyVal.value);
@@ -79,7 +80,7 @@ void Parser< TAllocator >::parseNumber(PrimVariant& primVariant)
 		isFloat |= curr == 'e' || curr == 'E' || curr == '.';
 		buffor[inx++] = curr;
 		if(inx >= buffSize-1)
-			throw SyntaxError(file);
+			throw SyntaxError::constOverflow(file.get());
 
         file.get().get();
         curr = file.get().peek();
@@ -124,7 +125,7 @@ void Parser< TAllocator >::parseAnyPrim(PrimVariant& primVariant)
 		parseNumber(primVariant);
 		break;
 	default:
-		throw SyntaxError(file);
+		throw SyntaxError::unexpectedCharactrersWhenParsing(file.get(), file.get().peek(), "any json type");
 	}
 }
 
@@ -133,7 +134,7 @@ void Parser< TAllocator >::parseObject(PrimObject& obj)
 {
 	skipWhitespace();
 	if(!file.get().consume('{'))
-		throw SyntaxError(file);
+		throw SyntaxError::expectedCharacters(file.get(), "{", "at the start of an Object");
 
 	obj = PrimObject{
 		.id = PRIM_OBJECT_ID,
@@ -165,7 +166,7 @@ void Parser< TAllocator >::parseObject(PrimObject& obj)
 	} while(file.get().consume(','));
 
 	if(!file.get().consume('}'))
-		throw SyntaxError(file);
+		throw SyntaxError::expectedCharacters(file.get(), ",", "before next element of an Object");
 }
 
 template< Allocator TAllocator >
@@ -173,7 +174,7 @@ void Parser< TAllocator >::parseArray(PrimArray& arr)
 {
 	skipWhitespace();
 	if(!file.get().consume('['))
-		throw SyntaxError(file);
+		throw SyntaxError::expectedCharacters(file.get(), "[", "at the start of an Array");
 
 	arr = PrimArray{
 		.id = PRIM_ARRAY_ID,
@@ -205,7 +206,7 @@ void Parser< TAllocator >::parseArray(PrimArray& arr)
 	} while(file.get().consume(','));
 
 	if(!file.get().consume(']'))
-		throw SyntaxError(file);
+		throw SyntaxError::expectedCharacters(file.get(), ",", "before next element of an Array");
 }
 
 template< Allocator TAllocator >
@@ -229,7 +230,7 @@ void Parser< TAllocator >::parseInt(PrimInt& i, char buffor[], const char* end) 
 	};
 
 	if(readEnd != end)
-		throw SyntaxError(file);
+		throw SyntaxError::unexpectedCharactrersWhenParsing(file.get(), *readEnd, "int");
 }
 
 template< Allocator TAllocator >
@@ -242,7 +243,7 @@ void Parser< TAllocator >::parseFloat(PrimFloat& f, char buffor[], const char* e
 	};
 
 	if(readEnd != end)
-		throw SyntaxError(file);
+		throw SyntaxError::unexpectedCharactrersWhenParsing(file.get(), *readEnd, "float");
 }
 
 template< Allocator TAllocator >
@@ -257,7 +258,7 @@ void Parser< TAllocator >::parseBool(PrimBool& b) const
 			&& file.get().consume('e')};
 
 		if(!isTrue)
-			throw SyntaxError(file);
+			throw SyntaxError::unexpectedCharactrersWhenParsing(file.get(), file.get().peek(), "true");
 
 		b.value = true;
 	}
@@ -269,12 +270,12 @@ void Parser< TAllocator >::parseBool(PrimBool& b) const
 			&& file.get().consume('e')};
 
 		if(!isFalse)
-			throw SyntaxError(file);
+			throw SyntaxError::unexpectedCharactrersWhenParsing(file.get(), file.get().peek(), "false");
 
 		b.value = false;
 	}
 	else
-		throw SyntaxError(file);
+		throw SyntaxError::unexpectedCharactrersWhenParsing(file.get(), file.get().peek(), "json::Bool");
 }
 
 template< Allocator TAllocator >
@@ -286,7 +287,7 @@ void Parser< TAllocator >::parseNull(PrimNull& null) const
 		&& file.get().consume('l')};
 
 	if(!isNull)
-		throw SyntaxError(file);
+		throw SyntaxError::unexpectedCharactrersWhenParsing(file.get(), file.get().peek(), "null");
 
 	null.id = PRIM_NULL_ID;
 }
@@ -311,6 +312,11 @@ PrimVariant& Parser< TAllocator >::operator()()
     };
 
     parseAnyPrim(*prim);
+	skipWhitespace();
+	const bool isInputEnd{file.get().peek() == '\0' || file.get().peek() == EOF};
+	if(!isInputEnd)
+		throw EndOfInputExpected(file.get());
+
     return *prim;
 }
 

@@ -2,7 +2,7 @@
 
 #include <BetterJson/Implementations/Array.tpp>
 #include <BetterJson/Implementations/Bool.tpp>
-#include <BetterJson/Implementations/Exceptions.tpp>
+#include <BetterJson/Implementations/ParserExceptions.tpp>
 #include <BetterJson/Implementations/JsonExceptions.hpp>
 #include <BetterJson/Implementations/File.tpp>
 #include <BetterJson/Implementations/Float.tpp>

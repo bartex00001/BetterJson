@@ -64,11 +64,11 @@ inline char FileStream::peek() const
 inline char FileStream::get()
 {
     const char res = lineBuff[linePos++];
-    if(linePos == lineBuff.size())
+    while(linePos == lineBuff.size() && !stream.get().eof())
     {
-        linePos = 0;
-        std::getline(stream.get(), lineBuff);
-        lineNumber++;
+	    linePos = 0;
+    	std::getline(stream.get(), lineBuff);
+    	lineNumber++;
     }
 
     return res;
