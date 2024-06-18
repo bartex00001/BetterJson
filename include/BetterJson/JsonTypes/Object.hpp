@@ -36,18 +36,14 @@ public:
 
     std::size_t size() const;
 
-    template< typename T >
-    void emplace(const std::string& key, const T& value);
-
-    template< typename T >
-    void emplace(const std::string& key, T&& value);
-
-    void emplace(const std::string& key, const std::shared_ptr< Json >& value);
+    void emplace(const std::string& key, Json& value);
+    void emplace(const std::string& key, Json&& value);
+	void emplace(const std::string& key, const std::shared_ptr< Json >& value);
 
     void erase(const std::string& key);
 
     bool contains(const std::string& key) const;
-    std::optional< std::shared_ptr< Json > > getOpt(const std::string& key);
+	std::optional< std::reference_wrapper< Json > > getOpt(const std::string& key);
 
     void clear();
 

@@ -36,12 +36,9 @@ public:
     [[nodiscard]]
     std::size_t size() const;
 
-    template< typename T >
-    void push_back(const T& elem);
 
-    template< typename T >
-    void push_back(T&& elem);
-
+    void push_back(Json& elem);
+    void push_back(Json&& elem);
     void push_back(const std::shared_ptr< Json >& elem);
 
     void pop_back();

@@ -3,6 +3,7 @@
 
 #include <BetterJson/json.hpp>
 
+
 int main()
 {
 	json::Object obj;
@@ -10,6 +11,8 @@ int main()
 	obj["abc"].as< json::Int >() = 3;
 	obj["key"];
 
+	auto sBool{std::make_shared< json::Bool >(true)};
+	obj.emplace("someBool", sBool);
+
 	std::cout << obj;
 }
-

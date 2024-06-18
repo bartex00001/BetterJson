@@ -3,6 +3,7 @@
 #include <BetterJson/JsonTypes/Object.hpp>
 #include <BetterJson/Prim.hpp>
 #include <BetterJson/Visitor.hpp>
+#include <BetterJson/SharedCreator.hpp>
 
 
 namespace json
@@ -65,21 +66,19 @@ inline std::size_t Object::size() const
     return data.size();
 }
 
-template< typename T >
-void Object::emplace(const std::string& key, const T& value)
+inline void Object::emplace(const std::string& key, Json& value)
 {
-    data.emplace(key, JsonVariant(std::make_shared< T >(value)));
+	data.emplace(key, SharedCreator()(value));
 }
 
-template< typename T >
-void Object::emplace(const std::string& key, T&& value)
+inline void Object::emplace(const std::string& key, Json&& value)
 {
-    data.emplace(key, JsonVariant(std::make_shared< T >(std::forward<T>(value))));
+	data.emplace(key, SharedCreator()(value));
 }
 
 inline void Object::emplace(const std::string& key, const std::shared_ptr< Json >& value)
 {
-    data.emplace(key, JsonVariant(value));
+	data.emplace(key, JsonVariant(value));
 }
 
 inline void Object::erase(const std::string& key)
@@ -92,12 +91,12 @@ inline bool Object::contains(const std::string& key) const
     return data.contains(key);
 }
 
-inline std::optional< std::shared_ptr< Json > > Object::getOpt(const std::string& key)
+inline std::optional< std::reference_wrapper< Json > > Object::getOpt(const std::string& key)
 {
     if(!contains(key))
         return std::nullopt;
 
-    return data[key].getJson();
+    return *data[key].getJson();
 }
 
 inline void Object::accept(Visitor& visitor)

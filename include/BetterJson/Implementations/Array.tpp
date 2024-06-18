@@ -2,6 +2,7 @@
 
 #include <BetterJson/JsonTypes/Array.hpp>
 #include <BetterJson/Prim.hpp>
+#include <BetterJson/SharedCreator.hpp>
 #include <BetterJson/Visitor.hpp>
 
 
@@ -58,16 +59,14 @@ inline std::size_t Array::size() const
     return data.size();
 }
 
-template< typename T >
-void Array::push_back(const T& elem)
+void Array::push_back(Json& elem)
 {
-    data.push_back(JsonVariant(std::make_shared< T >(elem)));
+    data.emplace_back(SharedCreator()(elem));
 }
 
-template< typename T >
-void Array::push_back(T&& elem)
+void Array::push_back(Json&& elem)
 {
-    data.push_back(JsonVariant(std::make_shared< T >(std::forward<T>(elem))));
+    data.emplace_back(SharedCreator()(elem));
 }
 
 inline void Array::push_back(const std::shared_ptr< Json >& elem)
