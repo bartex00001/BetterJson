@@ -9,10 +9,9 @@
 namespace json
 {
 
-template< Allocator TAllocator = DefaultAllocator >
 class Parser
 {
-	std::reference_wrapper< TAllocator > alloc;
+	std::reference_wrapper< DefaultAllocator > alloc;
 	std::reference_wrapper< File > file;
     bool used{};
 
@@ -33,7 +32,7 @@ class Parser
 	void parseNull(PrimNull& null) const;
 
 public:
-	Parser(TAllocator& alloc, File& file);
+	Parser(DefaultAllocator& alloc, File& file);
     PrimVariant& operator()();
 
 	static std::shared_ptr< Json > parse(File& file);

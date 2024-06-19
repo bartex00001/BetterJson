@@ -12,15 +12,13 @@
 namespace json
 {
 
-template< Allocator TAllocator >
-void Parser< TAllocator >::skipWhitespace()
+inline void Parser::skipWhitespace()
 {
 	while(std::isspace(file.get().peek()))
 		file.get().get();
 }
 
-template< Allocator TAllocator >
-void Parser< TAllocator >::parseString(char*& str)
+inline void Parser::parseString(char*& str)
 {
 	skipWhitespace();
 	if(!file.get().consume('"'))
@@ -53,8 +51,7 @@ void Parser< TAllocator >::parseString(char*& str)
     	throw SyntaxError::expectedCharacters(file.get(), "\"", "at the end of a string");
 }
 
-template< Allocator TAllocator >
-void Parser< TAllocator >::parseObjectValue(ObjKeyValuePair& objKeyVal)
+inline void Parser::parseObjectValue(ObjKeyValuePair& objKeyVal)
 {
 	parseString(objKeyVal.key);
 
@@ -66,10 +63,9 @@ void Parser< TAllocator >::parseObjectValue(ObjKeyValuePair& objKeyVal)
 	parseAnyPrim(*objKeyVal.value);
 }
 
-template< Allocator TAllocator >
-void Parser< TAllocator >::parseNumber(PrimVariant& primVariant)
+inline void Parser::parseNumber(PrimVariant& primVariant)
 {
-	constexpr std::size_t buffSize{64};
+	constexpr std::size_t buffSize{BETTER_JSON_LINE_BUFFER_SIZE};
 	char buffor[buffSize];
 	std::size_t inx{};
 
@@ -93,8 +89,7 @@ void Parser< TAllocator >::parseNumber(PrimVariant& primVariant)
 		parseInt(primVariant.pInt, buffor, buffor + inx);
 }
 
-template< Allocator TAllocator >
-void Parser< TAllocator >::parseAnyPrim(PrimVariant& primVariant)
+inline void Parser::parseAnyPrim(PrimVariant& primVariant)
 {
 	skipWhitespace();
 	if(std::isdigit(file.get().peek())) // No good way for encoding this in a switch
@@ -129,8 +124,7 @@ void Parser< TAllocator >::parseAnyPrim(PrimVariant& primVariant)
 	}
 }
 
-template< Allocator TAllocator >
-void Parser< TAllocator >::parseObject(PrimObject& obj)
+inline void Parser::parseObject(PrimObject& obj)
 {
 	skipWhitespace();
 	if(!file.get().consume('{'))
@@ -169,8 +163,7 @@ void Parser< TAllocator >::parseObject(PrimObject& obj)
 		throw SyntaxError::expectedCharacters(file.get(), ",", "before next element of an Object");
 }
 
-template< Allocator TAllocator >
-void Parser< TAllocator >::parseArray(PrimArray& arr)
+inline void Parser::parseArray(PrimArray& arr)
 {
 	skipWhitespace();
 	if(!file.get().consume('['))
@@ -209,8 +202,7 @@ void Parser< TAllocator >::parseArray(PrimArray& arr)
 		throw SyntaxError::expectedCharacters(file.get(), ",", "before next element of an Array");
 }
 
-template< Allocator TAllocator >
-void Parser< TAllocator >::parseString(PrimString& str)
+inline void Parser::parseString(PrimString& str)
 {
 	str = PrimString{
 		.id = PRIM_STRING_ID,
@@ -220,8 +212,7 @@ void Parser< TAllocator >::parseString(PrimString& str)
 	parseString(str.str);
 }
 
-template< Allocator TAllocator >
-void Parser< TAllocator >::parseInt(PrimInt& i, char buffor[], const char* end) const
+inline void Parser::parseInt(PrimInt& i, char buffor[], const char* end) const
 {
 	char* readEnd;
 	i = PrimInt{
@@ -233,8 +224,7 @@ void Parser< TAllocator >::parseInt(PrimInt& i, char buffor[], const char* end) 
 		throw SyntaxError::unexpectedCharactrersWhenParsing(file.get(), *readEnd, "int");
 }
 
-template< Allocator TAllocator >
-void Parser< TAllocator >::parseFloat(PrimFloat& f, char buffor[], const char* end) const
+inline void Parser::parseFloat(PrimFloat& f, char buffor[], const char* end) const
 {
 	char* readEnd;
 	f = PrimFloat{
@@ -246,8 +236,7 @@ void Parser< TAllocator >::parseFloat(PrimFloat& f, char buffor[], const char* e
 		throw SyntaxError::unexpectedCharactrersWhenParsing(file.get(), *readEnd, "float");
 }
 
-template< Allocator TAllocator >
-void Parser< TAllocator >::parseBool(PrimBool& b) const
+inline void Parser::parseBool(PrimBool& b) const
 {
 	b.id = PRIM_BOOL_ID;
 
@@ -278,8 +267,7 @@ void Parser< TAllocator >::parseBool(PrimBool& b) const
 		throw SyntaxError::unexpectedCharactrersWhenParsing(file.get(), file.get().peek(), "json::Bool");
 }
 
-template< Allocator TAllocator >
-void Parser< TAllocator >::parseNull(PrimNull& null) const
+inline void Parser::parseNull(PrimNull& null) const
 {
 	bool isNull{file.get().consume('n')
 		&& file.get().consume('u')
@@ -293,15 +281,13 @@ void Parser< TAllocator >::parseNull(PrimNull& null) const
 }
 
 
-template< Allocator TAllocator >
-Parser< TAllocator >::Parser(TAllocator& alloc, File& file)
+inline Parser::Parser(DefaultAllocator& alloc, File& file)
 	: alloc(alloc),
       file(file)
 {
 }
 
-template< Allocator TAllocator >
-PrimVariant& Parser< TAllocator >::operator()()
+inline PrimVariant& Parser::operator()()
 {
     if(used)
         throw std::logic_error("Parser already used for given file.");
@@ -320,44 +306,40 @@ PrimVariant& Parser< TAllocator >::operator()()
     return *prim;
 }
 
-template< Allocator TAllocator >
-std::shared_ptr< Json > Parser< TAllocator>::parse(File& file)
+inline std::shared_ptr< Json > Parser::parse(File& file)
 {
 	auto allocator{std::make_shared< DefaultAllocator >(DefaultAllocator{})};
 	return JsonVariant(
-		Parser<>(*allocator, file)(),
+		Parser(*allocator, file)(),
 		allocator
 		).getJson();
 }
 
-template< Allocator TAllocator >
-std::shared_ptr< Json > Parser< TAllocator>::parse(File&& file)
+inline std::shared_ptr< Json > Parser::parse(File&& file)
 {
 	auto allocator{std::make_shared< DefaultAllocator >(DefaultAllocator{})};
 	return JsonVariant(
-		Parser<>(*allocator, file)(),
+		Parser(*allocator, file)(),
 		allocator
 		).getJson();
 }
 
-template< Allocator TAllocator >
-std::shared_ptr< Json > Parser< TAllocator>::parse(const std::string& str)
+inline std::shared_ptr< Json > Parser::parse(const std::string& str)
 {
 	Buffer fileBuffer(str.c_str());
 	auto allocator{std::make_shared< DefaultAllocator >(DefaultAllocator{})};
 	return JsonVariant(
-		Parser<>(*allocator, fileBuffer)(),
+		Parser(*allocator, fileBuffer)(),
 		allocator
 		).getJson();
 }
 
-template< Allocator TAllocator >
-std::shared_ptr< Json > Parser< TAllocator>::parse(std::istream& stream)
+inline std::shared_ptr< Json > Parser::parse(std::istream& stream)
 {
 	FileStream fileStream(stream);
 	auto allocator{std::make_shared< DefaultAllocator >(DefaultAllocator{})};
 	return JsonVariant(
-		Parser<>(*allocator, fileStream)(),
+		Parser(*allocator, fileStream)(),
 		allocator
 		).getJson();
 }
