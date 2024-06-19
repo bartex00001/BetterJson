@@ -22,7 +22,7 @@ public:
 	JsonVariant(PrimVariant& primVariant, std::shared_ptr< DefaultAllocator > alloc);
 	JsonVariant(std::shared_ptr< Json > jsonType);
 
-	std::shared_ptr< Json >& getRawJson();
+	std::shared_ptr< Json >& getInsideJsonRef();
 	std::shared_ptr< Json > getJson();
 };
 

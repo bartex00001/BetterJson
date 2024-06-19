@@ -23,7 +23,7 @@ inline JsonVariant::JsonVariant(std::shared_ptr< Json > jsonType)
 	: json(jsonType)
 {}
 
-inline std::shared_ptr< Json >& JsonVariant::getRawJson()
+inline std::shared_ptr< Json >& JsonVariant::getInsideJsonRef()
 {
 	if(std::holds_alternative< std::shared_ptr< Json > >(json))
 		return std::get< std::shared_ptr< Json > >(json);
@@ -61,7 +61,7 @@ inline std::shared_ptr< Json >& JsonVariant::getRawJson()
 
 inline std::shared_ptr< Json > JsonVariant::getJson()
 {
-	return getRawJson();
+	return getInsideJsonRef();
 }
 
 }//namespace json

@@ -66,7 +66,7 @@ inline std::shared_ptr< Json >& Object::getOwner(const std::string& key)
     if(!contains(key))
         emplace(key, json::Null());
 
-    return data[key].getRawJson();
+    return data[key].getInsideJsonRef();
 }
 
 inline std::size_t Object::size() const

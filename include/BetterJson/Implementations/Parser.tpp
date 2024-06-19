@@ -18,7 +18,7 @@ inline void Parser::skipWhitespace()
 		file.get().get();
 }
 
-inline void Parser::parseString(char*& str)
+inline void Parser::parseRawString(char*& str)
 {
 	skipWhitespace();
 	if(!file.get().consume('"'))
@@ -53,7 +53,7 @@ inline void Parser::parseString(char*& str)
 
 inline void Parser::parseObjectValue(ObjKeyValuePair& objKeyVal)
 {
-	parseString(objKeyVal.key);
+	parseRawString(objKeyVal.key);
 
     skipWhitespace();
     if(!file.get().consume(':'))
@@ -209,7 +209,7 @@ inline void Parser::parseString(PrimString& str)
 		.owner = true
 	};
 
-	parseString(str.str);
+	parseRawString(str.str);
 }
 
 inline void Parser::parseInt(PrimInt& i, char buffor[], const char* end) const

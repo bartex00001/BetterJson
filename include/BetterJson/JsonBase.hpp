@@ -30,11 +30,11 @@ public:
     JSON_BASE() = default;
 };
 
-#define JSON(type, name) \
-type name{ [&](){\
-    if(this->json)\
-        return retrieve< type >(this->json.value().get().as< json::Object>()[#name]); \
-    return type{}; \
+#define JSON(type, name)                                                                  \
+    type name{ [&](){                                                                     \
+        if(this->json)                                                                    \
+            return retrieve< type >(this->json.value().get().as< json::Object >()[#name]);\
+        return type{};                                                                    \
     }()};
 
 #define JSON_VEC(vType, name)                                                                  \

@@ -17,7 +17,7 @@ class Parser
 
 	void skipWhitespace();
 
-	void parseString(char*& str);
+	void parseRawString(char*& str);
 	void parseObjectValue(ObjKeyValuePair& objKeyVal);
 	void parseNumber(PrimVariant& primVariant);
 
