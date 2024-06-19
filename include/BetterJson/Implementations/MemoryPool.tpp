@@ -25,7 +25,7 @@ void MemoryPool< TAllocator >::addChunk(std::size_t n)
 template< Allocator TAllocator >
 void* MemoryPool< TAllocator >::allocate(std::size_t n)
 {
-	void* address{reinterpret_cast< void* >(last) + last->size};
+	void* address{reinterpret_cast< char* >(last) + last->size};
 	last->size += n;
 	return address;
 }
@@ -40,7 +40,7 @@ bool MemoryPool< TAllocator >::canFitAlloc(std::size_t n) const
 template< Allocator TAllocator >
 bool MemoryPool< TAllocator >::isLastElement(const void* addr, std::size_t elementSize) const
 {
-	return reinterpret_cast< void* >(last) + last->size - elementSize == addr;
+	return reinterpret_cast< char* >(last) + last->size - elementSize == addr;
 }
 
 template< Allocator TAllocator >

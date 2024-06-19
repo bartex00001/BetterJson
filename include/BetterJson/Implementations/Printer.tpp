@@ -132,7 +132,7 @@ inline void Printer::visit(Null& null [[maybe_unused]])
 
 std::ostream& operator<<(std::ostream& os, Json& json)
 {
-    return os << Printer(4)(json);
+    return os << Printer(4)(json) << '\n';
 }
 
 }

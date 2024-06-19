@@ -1,0 +1,40 @@
+{
+  "index": 6,
+  "isActive": false,
+  "balance": "$1,748.35",
+  "picture": "http://placehold.it/32x32",
+  "age": 24,
+  "eyeColor": "brown",
+  "name": "Harriett Juarez",
+  "gender": "female",
+  "company": "KNOWLYSIS",
+  "email": "harriettjuarez@knowlysis.com",
+  "phone": "+1 (856) 472-3355",
+  "latitude": -32.918002,
+  "longitude": -130.789005,
+  "tags": [
+    "laboris",
+    "magna",
+    "cupidatat",
+    "pariatur",
+    "adipisicing",
+    "nostrud",
+    "laborum"
+  ],
+  "friends": [
+    {
+      "id": 0,
+      "name": "Jeannie Hanson"
+    },
+    {
+      "id": 1,
+      "name": "Melody Thompson"
+    },
+    {
+      "id": 2,
+      "name": "Isabel Rivera"
+    }
+  ],
+  "greeting": "Hello, Harriett Juarez! You have 9 unread messages.",
+  "favoriteFruit": "apple"
+}
