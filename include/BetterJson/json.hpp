@@ -16,3 +16,4 @@
 #include <BetterJson/Implementations/String.tpp>
 #include <BetterJson/Implementations/SharedCreator.tpp>
 #include <BetterJson/Implementations/MemoryPool.tpp>
+#include <BetterJson/Implementations/JsonBase.tpp>
