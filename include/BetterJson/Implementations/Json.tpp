@@ -22,6 +22,21 @@ auto Json::as() -> T&
 
 template< typename T >
 	requires std::is_base_of_v< Json, T > && (!std::is_same_v< Json, T >)
+void Json::castTo(std::shared_ptr< Json >& json)
+{
+	try
+	{
+		json->as< T >();
+	}
+	catch(const std::bad_cast& badCast [[maybe_unused]])
+	{
+		std::shared_ptr< Json > temp{std::make_shared< T >()};
+		std::swap(json, temp);
+	}
+}
+
+template< typename T >
+	requires std::is_base_of_v< Json, T > && (!std::is_same_v< Json, T >)
 auto Json::operator=(T& other) -> T&
 {
 	return this->as< T >() = other;

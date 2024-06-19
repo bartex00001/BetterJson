@@ -32,10 +32,10 @@ public:
     Array& operator=(const std::vector< std::shared_ptr< Json > >& vec);
 
     Json& operator[](std::size_t inx);
+    std::shared_ptr< Json >& getOwner(std::size_t inx);
 
     [[nodiscard]]
     std::size_t size() const;
-
 
     void push_back(Json& elem);
     void push_back(Json&& elem);

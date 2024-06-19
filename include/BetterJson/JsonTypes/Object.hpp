@@ -30,7 +30,9 @@ public:
     Object& operator=(const Object& other);
     Object& operator=(Object&& other) noexcept;
     Object& operator=(const std::unordered_map< std::string, std::shared_ptr< Json > >& map);
+
     Json& operator[](const std::string& key);
+    std::shared_ptr< Json >& getOwner(const std::string& key);
 
     void accept(class Visitor& visitor) override;
 

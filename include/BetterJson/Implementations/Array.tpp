@@ -54,6 +54,11 @@ inline Json& Array::operator[](std::size_t inx)
     return *data[inx].getJson();
 }
 
+inline std::shared_ptr< Json >& Array::getOwner(std::size_t inx)
+{
+    return data[inx].getRawJson();
+}
+
 inline std::size_t Array::size() const
 {
     return data.size();
