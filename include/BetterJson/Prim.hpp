@@ -9,12 +9,12 @@ namespace json
 union PrimVariant
 {
 	PrimNull pNull{.id = PRIM_NULL_ID};
-	PrimArray pArray;
 	PrimObject pObject;
-	PrimBool pBool;
+	PrimArray pArray;
+	PrimString pString;
 	PrimFloat pFloat;
 	PrimInt pInt;
-	PrimString pString;
+	PrimBool pBool;
 };
 
 struct ObjKeyValuePair

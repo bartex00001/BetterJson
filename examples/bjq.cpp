@@ -23,11 +23,11 @@ int main(int argc, char** argv)
 {
 	if(argc == 1)
 		useStdin();
-	else if(argc == 3 && std::strcmp(argv[1], "-i") == 0)
+	else if(argc == 3 && std::strcmp(argv[1], "-f") == 0)
 		useFile(argv[2]);
 	else
 	{
-		std::cerr << "Invalid arguments\nexpected no arguments or '-i' followed by filename\n";
+		std::cerr << "Invalid arguments\nexpected no arguments or '-f' followed by filename\n";
 		exit(1);
 	}
 }

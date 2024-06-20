@@ -46,7 +46,7 @@ struct PrimBool
 struct PrimFloat
 {
 	TypeId id;
-	long double value;
+	double value;
 };
 
 struct PrimInt

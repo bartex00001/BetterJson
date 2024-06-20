@@ -229,7 +229,7 @@ inline void Parser::parseFloat(PrimFloat& f, char buffor[], const char* end) con
 	char* readEnd;
 	f = PrimFloat{
 		.id = PRIM_FLOAT_ID,
-		.value = std::strtold(buffor, &readEnd)
+		.value = std::strtod(buffor, &readEnd)
 	};
 
 	if(readEnd != end)

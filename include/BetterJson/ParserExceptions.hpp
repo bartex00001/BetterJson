@@ -13,8 +13,9 @@ class SyntaxError : public std::exception
 {
     std::string message;
 
-public:
 	SyntaxError(File& buffer, const std::string& info) noexcept;
+
+public:
 	static SyntaxError unexpectedCharactrersWhenParsing(File& buffer, char c, const std::string& type);
 	static SyntaxError expectedCharacters(File& buffer, const std::string& chars, const std::string& info);
 	static SyntaxError constOverflow(File& buffer);
