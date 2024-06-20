@@ -26,6 +26,13 @@ W zamian dostępne są funkcje statyczne:
 - `parse(const std::string& str)` – parsowanie bufora `str`; skrót od tworzenia klasy `Buffer` i przekazywania jej do innej wersji metody `parse`
 - `parse(std::istream& stream)` – parsowanie strumienia `stream`; skrót od tworzenia klasy `FileStream` i przekazywania jej do innej wersji metody `parse`
 
+#### Excaptions
+
+Każda z wyżej wymienionych funkcji może rzucić jeden z następujących wyjątków:
+
+- [SyntaxError](../Exceptions/SyntaxError.md)
+- [EndOfInputExpected](../Exceptions/EndOfInputExpected.md)
+
 ## Przykład
 
 ```cpp
