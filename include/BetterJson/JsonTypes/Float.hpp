@@ -17,11 +17,11 @@ public:
     Float(Float&& other) noexcept;
     Float(std::shared_ptr< Allocator > alloc, PrimFloat& prim);
 
-    long double& value();
-
     long double& operator=(long double val);
     Float& operator=(const Float& other);
     Float& operator=(Float&& other) noexcept;
+
+    long double& value();
 
     operator long double&();
 

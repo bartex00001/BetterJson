@@ -13,7 +13,7 @@ Null::Null(std::shared_ptr< Allocator > alloc, PrimNull& pNull)
     alloc->free(&pNull);
 }
 
-inline Null::Null(Null&)
+inline Null::Null(const Null&)
 {}
 
 inline Null::Null(Null&&) noexcept

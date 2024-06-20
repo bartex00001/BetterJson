@@ -17,10 +17,11 @@ public:
     Int(Int&& other) noexcept;
     Int(std::shared_ptr< Allocator > alloc, PrimInt& prim);
 
-    long long& value();
     long long& operator=(long long val);
     Int& operator=(const Int& other);
     Int& operator=(Int&& other) noexcept;
+
+    long long& value();
 
     operator long long&();
 

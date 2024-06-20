@@ -56,6 +56,7 @@ inline std::shared_ptr< Json >& JsonVariant::getInsideJsonRef()
 		throw std::runtime_error("Unknown prim json type");
 	}
 
+	allocator.reset();
 	return std::get< std::shared_ptr< Json > >(json);
 }
 

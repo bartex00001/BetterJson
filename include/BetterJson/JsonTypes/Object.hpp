@@ -21,10 +21,10 @@ public:
     friend class ObjectIterator;
 
     Object() = default;
+    Object(const std::unordered_map< std::string, std::shared_ptr< Json > >& map);
     Object(const Object& other);
     Object(Object&& other) noexcept;
     Object(std::shared_ptr< Allocator > alloc,  PrimObject& prim);
-
 
     Object& operator=(const Object& other);
     Object& operator=(Object&& other) noexcept;
@@ -33,20 +33,21 @@ public:
     Json& operator[](const std::string& key);
     std::shared_ptr< Json >& getOwner(const std::string& key);
 
-    void accept(class Visitor& visitor) override;
-
+    [[nodiscard]]
     std::size_t size() const;
 
     void emplace(const std::string& key, Json& value);
     void emplace(const std::string& key, Json&& value);
 	void emplace(const std::string& key, const std::shared_ptr< Json >& value);
 
-    void erase(const std::string& key);
-
     bool contains(const std::string& key) const;
 	std::optional< std::reference_wrapper< Json > > getOpt(const std::string& key);
 
+    void erase(const std::string& key);
+
     void clear();
+
+    void accept(class Visitor& visitor) override;
 
     iterator begin();
     iterator end();

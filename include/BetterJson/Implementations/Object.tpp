@@ -9,18 +9,25 @@
 namespace json
 {
 
-Object::Object(std::shared_ptr< Allocator > alloc,  PrimObject& prim)
+inline Object::Object(std::shared_ptr< Allocator > alloc, PrimObject& prim)
 {
-    data.reserve(prim.size);
-    for(std::size_t i{}; i < prim.size; ++i)
-    {
-        data[std::string(prim.elements[i]->key)] = JsonVariant(*prim.elements[i]->value, alloc);
-        alloc->free(prim.elements[i]->key);
-        alloc->free(prim.elements[i]);
-    }
+	data.reserve(prim.size);
+	for(std::size_t i{}; i < prim.size; ++i)
+	{
+		data[std::string(prim.elements[i]->key)] = JsonVariant(*prim.elements[i]->value, alloc);
+		alloc->free(prim.elements[i]->key);
+		alloc->free(prim.elements[i]);
+	}
 
-    alloc->free(prim.elements);
-    alloc->free(&prim);
+	alloc->free(prim.elements);
+	alloc->free(&prim);
+}
+
+inline Object::Object(const std::unordered_map< std::string, std::shared_ptr< Json > >& map)
+{
+    data.reserve(map.size());
+    for(auto& [key, value] : map)
+        data[key] = value;
 }
 
 inline Object::Object(const Object& other)

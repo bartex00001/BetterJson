@@ -26,8 +26,8 @@ protected:
     static auto retrieve(Json& j) -> T;
 
 public:
-    JSON_BASE(Json& json);
     JSON_BASE() = default;
+    JSON_BASE(Json& json);
 };
 
 #define JSON(type, name)                                                                   \

@@ -16,12 +16,12 @@ public:
     Bool(const Bool& other);
     Bool(Bool&& other) noexcept;
     Bool(std::shared_ptr< Allocator > alloc, PrimBool& prim);
-
-    bool& value();
     
     bool& operator=(bool val);
     Bool& operator=(const Bool& other);
     Bool& operator=(Bool&& other) noexcept;
+
+    bool& value();
 
     operator bool&();
 

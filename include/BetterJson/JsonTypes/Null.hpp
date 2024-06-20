@@ -10,7 +10,7 @@ class Null : public Json
 {
 public:
     Null() = default;
-    Null(Null&);
+    Null(const Null&);
     Null(Null&&) noexcept;
     Null(std::shared_ptr< Allocator > alloc, PrimNull& pNull);
 

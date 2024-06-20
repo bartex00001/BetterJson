@@ -34,10 +34,10 @@ class Parser
 	void parseBool(PrimBool& b) const;
 	void parseNull(PrimNull& null) const;
 
-public:
 	Parser(TAllocator& alloc, File& file);
-    PrimVariant& operator()();
+	PrimVariant& operator()();
 
+public:
 	static std::shared_ptr< Json > parse(File& file);
 	static std::shared_ptr< Json > parse(File&& file);
 	static std::shared_ptr< Json > parse(const std::string& str);

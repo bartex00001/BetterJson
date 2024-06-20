@@ -21,9 +21,10 @@ public:
     friend class ArrayIterator;
 
     Array() = default;
-    Array(std::shared_ptr< Allocator > alloc, PrimArray& prim);
+    Array(const std::vector< std::shared_ptr< Json > >& vec);
     Array(const Array& other);
     Array(Array&& other) noexcept;
+    Array(std::shared_ptr< Allocator > alloc, PrimArray& prim);
 
     Array& operator=(const Array& other);
     Array& operator=(Array&& other) noexcept;
@@ -40,6 +41,8 @@ public:
     void push_back(const std::shared_ptr< Json >& elem);
 
     void pop_back();
+
+    void clear();
 
     void accept(class Visitor& visitor) override;
 

@@ -9,14 +9,21 @@
 namespace json
 {
 
-Array::Array(std::shared_ptr< Allocator > alloc, PrimArray& prim)
+inline Array::Array(std::shared_ptr< Allocator > alloc, PrimArray& prim)
 {
-    data.reserve(prim.size);
-    for(std::size_t i{}; i < prim.size; ++i)
-        data.push_back(JsonVariant(*prim.elements[i], alloc));
+	data.reserve(prim.size);
+	for(std::size_t i{}; i < prim.size; ++i)
+		data.push_back(JsonVariant(*prim.elements[i], alloc));
 
-    alloc->free(prim.elements);
-    alloc->free(&prim);
+	alloc->free(prim.elements);
+	alloc->free(&prim);
+}
+
+inline Array::Array(const std::vector< std::shared_ptr< Json > >& vec)
+{
+    data.reserve(vec.size());
+    for(const auto& sharedJson: vec)
+        data.emplace_back(sharedJson);
 }
 
 inline Array::Array(const Array& other)
@@ -80,7 +87,12 @@ inline void Array::push_back(const std::shared_ptr< Json >& elem)
 
 inline void Array::pop_back()
 {
-    data.pop_back();
+	data.pop_back();
+}
+
+inline void Array::clear()
+{
+    data.clear();
 }
 
 inline void Array::accept(Visitor& visitor)
