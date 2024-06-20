@@ -12,9 +12,7 @@ public:
     Null() = default;
     Null(Null&);
     Null(Null&&) noexcept;
-
-    template< Allocator TAllocator >
-    Null(std::shared_ptr< TAllocator > alloc, PrimNull& pNull);
+    Null(std::shared_ptr< Allocator > alloc, PrimNull& pNull);
 
     void accept(class Visitor& visitor) override;
 };

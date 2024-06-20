@@ -20,8 +20,7 @@ inline Float::Float(Float&& other) noexcept
     : v(other.v)
 {}
 
-template< Allocator TAllocator >
-Float::Float(std::shared_ptr< TAllocator > alloc, PrimFloat& prim)
+Float::Float(std::shared_ptr< Allocator > alloc, PrimFloat& prim)
     : v(prim.value)
 {
     alloc->free(&prim);

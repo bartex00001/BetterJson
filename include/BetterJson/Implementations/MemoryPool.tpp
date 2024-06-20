@@ -9,7 +9,8 @@
 namespace json
 {
 
-template< Allocator TAllocator >
+template< typename TAllocator >
+	requires std::is_base_of_v< Allocator, TAllocator >
 void MemoryPool< TAllocator >::addChunk(std::size_t n)
 {
 	void* newChunk{allocator.malloc(n)};
@@ -22,7 +23,8 @@ void MemoryPool< TAllocator >::addChunk(std::size_t n)
 	};
 }
 
-template< Allocator TAllocator >
+template< typename TAllocator >
+	requires std::is_base_of_v< Allocator, TAllocator >
 void* MemoryPool< TAllocator >::allocate(std::size_t n)
 {
 	void* address{reinterpret_cast< char* >(last) + last->size};
@@ -31,26 +33,30 @@ void* MemoryPool< TAllocator >::allocate(std::size_t n)
 }
 
 
-template< Allocator TAllocator >
+template< typename TAllocator >
+	requires std::is_base_of_v< Allocator, TAllocator >
 bool MemoryPool< TAllocator >::canFitAlloc(std::size_t n) const
 {
 	return last->capacity > last->size + n;
 }
 
-template< Allocator TAllocator >
+template< typename TAllocator >
+	requires std::is_base_of_v< Allocator, TAllocator >
 bool MemoryPool< TAllocator >::isLastElement(const void* addr, std::size_t elementSize) const
 {
 	return reinterpret_cast< char* >(last) + last->size - elementSize == addr;
 }
 
-template< Allocator TAllocator >
+template< typename TAllocator >
+	requires std::is_base_of_v< Allocator, TAllocator >
 constexpr bool MemoryPool< TAllocator >::largerThanChunk(std::size_t n)
 {
 	return n >= BETTER_JSON_CHUNK_SIZE + sizeof(ChunkHeader);
 }
 
 
-template< Allocator TAllocator >
+template< typename TAllocator >
+	requires std::is_base_of_v< Allocator, TAllocator >
 MemoryPool< TAllocator >::MemoryPool()
 	: allocator(TAllocator())
 {
@@ -64,17 +70,19 @@ MemoryPool< TAllocator >::MemoryPool()
 	};
 }
 
-template< Allocator TAllocator >
+template< typename TAllocator >
+	requires std::is_base_of_v< Allocator, TAllocator >
 MemoryPool< TAllocator >::~MemoryPool() noexcept
 {
 	while((last = first) != nullptr)
 	{
 		first = first->next;
-		TAllocator::free(last);
+		allocator.free(last);
 	}
 }
 
-template< Allocator TAllocator >
+template< typename TAllocator >
+	requires std::is_base_of_v< Allocator, TAllocator >
 MemoryPool< TAllocator >::MemoryPool(MemoryPool&& mp) noexcept
 {
 	this->first = mp.first;
@@ -84,14 +92,15 @@ MemoryPool< TAllocator >::MemoryPool(MemoryPool&& mp) noexcept
 }
 
 
-template< Allocator TAllocator >
+template< typename TAllocator >
+	requires std::is_base_of_v< Allocator, TAllocator >
 MemoryPool< TAllocator >& MemoryPool< TAllocator >::operator=(MemoryPool&& mp) noexcept
 {
 	ChunkHeader* temp{};
 	while((temp = this->first) != nullptr)
 	{
 		this->first = this->first->next;
-		TAllocator::free(temp);
+		allocator.free(temp);
 	}
 
 	this->first = mp.first;
@@ -99,17 +108,19 @@ MemoryPool< TAllocator >& MemoryPool< TAllocator >::operator=(MemoryPool&& mp) n
 
 	mp.first = mp.last = nullptr;
 
-	return &this;
+	return *this;
 }
 
 
-template< Allocator TAllocator >
-void MemoryPool< TAllocator >::free(auto* addr [[maybe_unused]])
+template< typename TAllocator >
+	requires std::is_base_of_v< Allocator, TAllocator >
+void MemoryPool< TAllocator >::free(void* addr [[maybe_unused]]) noexcept
 {
 	// Do not free on call - all chunks will be released on object destruction
 }
 
-template< Allocator TAllocator >
+template< typename TAllocator >
+	requires std::is_base_of_v< Allocator, TAllocator >
 void* MemoryPool< TAllocator >::malloc(std::size_t n)
 {
 	if(!canFitAlloc(n)) [[unlikely]]
@@ -125,11 +136,12 @@ void* MemoryPool< TAllocator >::malloc(std::size_t n)
 	return allocate(n);
 }
 
-template< Allocator TAllocator >
-auto MemoryPool< TAllocator >::realloc(auto* addr, std::size_t oldSize, std::size_t newSize) -> decltype(addr)
+template< typename TAllocator >
+	requires std::is_base_of_v< Allocator, TAllocator >
+void* MemoryPool< TAllocator >::realloc(void* addr, std::size_t oldSize, std::size_t newSize)
 {
 	if(addr == nullptr)
-		return reinterpret_cast< decltype(addr) >(this->malloc(newSize));
+		return this->malloc(newSize);
 
 	// Smaller size? no modification needed
 	if(newSize <= oldSize)
@@ -149,11 +161,11 @@ auto MemoryPool< TAllocator >::realloc(auto* addr, std::size_t oldSize, std::siz
 
 	// Last element and the chunk is large? realloc in place (possibly avoid copy)
 	if(isLastElement(addr, oldSize) && largerThanChunk(newSize))
-		return reinterpret_cast< decltype(addr) >(allocator.realloc(last, last->size, last->size + newSize - oldSize));
+		return allocator.realloc(last, last->size, last->size + newSize - oldSize);
 
 	// Allocate new memory and copy old contents
 	void* newPtr{this->malloc(newSize)};
-	return reinterpret_cast< decltype(addr) >(std::memcpy(newPtr, addr, oldSize));
+	return std::memcpy(newPtr, addr, oldSize);
 }
 
 }// namespace json

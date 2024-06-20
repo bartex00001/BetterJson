@@ -24,7 +24,7 @@ struct Vector : json::JSON_BASE
 int main()
 {
 	auto file{json::FileStream(FILE_NAME)};
-	auto json{json::Parser::parse(file)};
+	auto json{json::Parser<>::parse(file)};
 
 	double avg{};
 	for(auto& obj: json->as< json::Array >())

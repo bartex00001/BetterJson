@@ -21,9 +21,7 @@ public:
     friend class ArrayIterator;
 
     Array() = default;
-
-    template< Allocator TAllocator >
-    Array(std::shared_ptr< TAllocator > alloc, PrimArray& prim);
+    Array(std::shared_ptr< Allocator > alloc, PrimArray& prim);
     Array(const Array& other);
     Array(Array&& other) noexcept;
 

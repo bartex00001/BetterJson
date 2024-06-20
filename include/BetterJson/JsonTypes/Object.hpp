@@ -21,11 +21,10 @@ public:
     friend class ObjectIterator;
 
     Object() = default;
-
-    template< Allocator TAllocator >
-    Object(std::shared_ptr< TAllocator > alloc,  PrimObject& prim);
     Object(const Object& other);
     Object(Object&& other) noexcept;
+    Object(std::shared_ptr< Allocator > alloc,  PrimObject& prim);
+
 
     Object& operator=(const Object& other);
     Object& operator=(Object&& other) noexcept;

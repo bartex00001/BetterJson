@@ -8,8 +8,7 @@
 namespace json
 {
 
-template< Allocator TAllocator >
-Null::Null(std::shared_ptr< TAllocator > alloc, PrimNull& pNull)
+Null::Null(std::shared_ptr< Allocator > alloc, PrimNull& pNull)
 {
     alloc->free(&pNull);
 }

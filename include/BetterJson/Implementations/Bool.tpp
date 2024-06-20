@@ -20,8 +20,7 @@ inline Bool::Bool(Bool&& other) noexcept
     : v(other.v)
 {}
 
-template< Allocator TAllocator >
-Bool::Bool(std::shared_ptr< TAllocator > alloc, PrimBool& prim)
+Bool::Bool(std::shared_ptr< Allocator > alloc, PrimBool& prim)
     : v(prim.value)
 {
     alloc->free(&prim);

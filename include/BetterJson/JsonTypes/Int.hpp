@@ -15,9 +15,7 @@ public:
     Int(long long val);
     Int(const Int& other);
     Int(Int&& other) noexcept;
-
-    template<typename TAllocator>
-    Int(std::shared_ptr< TAllocator > alloc, PrimInt& prim);
+    Int(std::shared_ptr< Allocator > alloc, PrimInt& prim);
 
     long long& value();
     long long& operator=(long long val);

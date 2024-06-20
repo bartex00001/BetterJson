@@ -1,34 +1,19 @@
 #pragma once
 
-#include <utility>
+#include <cstdint>
 
-
-template< typename T >
-concept Allocator = requires(T& allocator)
-{
-	{ T() };
-	{ allocator.malloc(std::declval< std::size_t >()) } -> std::same_as< void* >;
-	{ allocator.realloc(
-		std::declval< void* >(),
-		std::declval< std::size_t >(),
-		std::declval< std::size_t >())
-	} -> std::same_as< void* >;
-	{ T::free(std::declval< void* >()) };
-
-	{ T(std::move(std::declval< T >())) };
-	{ std::declval< T >() = std::move(std::declval< T >()) } -> std::same_as< T& >;
-};
-
-
-#include <BetterJson/MemoryPool.hpp>
-#include <BetterJson/CStdAllocator.hpp>
 
 namespace json
 {
 
-using DefaultAllocator = MemoryPool< CStdAllocator >;
+class Allocator
+{
+public:
+	virtual void* malloc(std::size_t n) = 0;
+	virtual void* realloc(void* addr, std::size_t oldSize, std::size_t newSize) = 0;
+	virtual void free(void* addr) noexcept = 0;
 
-static_assert(Allocator< CStdAllocator >);
-static_assert(Allocator< MemoryPool< CStdAllocator > >);
+	virtual ~Allocator() = default;
+};
 
 }//namespace json

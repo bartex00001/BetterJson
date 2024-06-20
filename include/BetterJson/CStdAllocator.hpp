@@ -2,23 +2,22 @@
 
 #include <cstdio>
 
+#include <BetterJson/Allocator.hpp>
+
 
 namespace json
 {
 
-class CStdAllocator
+class CStdAllocator : public Allocator
 {
 public:
-    static void free(auto* addr) noexcept;
+	[[nodiscard("Memory allocated via malloc must be released")]]
+	void* malloc(std::size_t n) override;
 
 	[[nodiscard("Memory allocated via malloc must be released")]]
-	static void* malloc(std::size_t n);
+    void* realloc(void* addr, std::size_t oldSize, std::size_t newSize) override;
 
-	[[nodiscard("Memory allocated via malloc must be released")]]
-    static auto* realloc(auto* addr, std::size_t oldSize, std::size_t newSize);
+	void free(void* addr) noexcept override;
 };
 
 }// namespace json
-
-// Include template implementation
-#include <BetterJson/Implementations/CStdAllocator.tpp>

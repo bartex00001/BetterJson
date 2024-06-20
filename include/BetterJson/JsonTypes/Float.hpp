@@ -15,9 +15,7 @@ public:
     Float(long double val);
     Float(const Float& other);
     Float(Float&& other) noexcept;
-
-    template< Allocator TAllocator >
-    Float(std::shared_ptr< TAllocator > alloc, PrimFloat& prim);
+    Float(std::shared_ptr< Allocator > alloc, PrimFloat& prim);
 
     long double& value();
 

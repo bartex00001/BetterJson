@@ -8,14 +8,14 @@
 
 void useStdin()
 {
-	auto json{json::Parser::parse(std::cin)};
+	auto json{json::Parser<>::parse(std::cin)};
 	std::cout << *json;
 }
 
 void useFile(const std::string& fileName)
 {
 	auto file{json::FileStream(fileName)};
-	auto json{json::Parser::parse(file)};
+	auto json{json::Parser<>::parse(file)};
 	std::cout << *json;
 }
 

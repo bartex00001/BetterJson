@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include <BetterJson/Allocator.hpp>
 #include <BetterJson/File.hpp>
 #include <BetterJson/JsonTypes/Json.hpp>
@@ -9,9 +10,11 @@
 namespace json
 {
 
+template< typename TAllocator = DefaultAllocator >
+	requires std::is_base_of_v< Allocator, TAllocator >
 class Parser
 {
-	std::reference_wrapper< DefaultAllocator > alloc;
+	std::reference_wrapper< TAllocator > alloc;
 	std::reference_wrapper< File > file;
     bool used{};
 
@@ -32,7 +35,7 @@ class Parser
 	void parseNull(PrimNull& null) const;
 
 public:
-	Parser(DefaultAllocator& alloc, File& file);
+	Parser(TAllocator& alloc, File& file);
     PrimVariant& operator()();
 
 	static std::shared_ptr< Json > parse(File& file);

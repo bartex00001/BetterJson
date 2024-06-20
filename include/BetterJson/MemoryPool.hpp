@@ -8,8 +8,9 @@
 namespace json
 {
 
-template< Allocator TAllocator >
-class MemoryPool
+template< typename TAllocator >
+	requires std::is_base_of_v< Allocator, TAllocator >
+class MemoryPool : public Allocator
 {
 	TAllocator allocator;
 
@@ -40,13 +41,13 @@ public:
 	MemoryPool(MemoryPool&& mp) noexcept;
 	MemoryPool& operator=(MemoryPool&& mp) noexcept;
 
-	static void free(auto* addr);
+	[[nodiscard("Memory allocated via malloc must be released")]]
+	void* malloc(std::size_t n) override;
 
 	[[nodiscard("Memory allocated via malloc must be released")]]
-	void* malloc(std::size_t n);
+	void* realloc(void* addr, std::size_t oldSize, std::size_t newSize) override;
 
-	[[nodiscard("Memory allocated via malloc must be released")]]
-	auto realloc(auto* addr, std::size_t oldSize, std::size_t newSize) -> decltype(addr);
+	void free(void* addr) noexcept override;
 };
 
 }// namespace json

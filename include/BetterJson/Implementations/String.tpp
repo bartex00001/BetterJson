@@ -20,8 +20,7 @@ inline String::String(String&& other) noexcept
     : std::string(std::move(other))
 {}
 
-template< Allocator TAllocator >
-String::String(std::shared_ptr< TAllocator > alloc, PrimString& prim)
+String::String(std::shared_ptr< Allocator > alloc, PrimString& prim)
     : std::string(prim.str)
 {
     if(prim.owner)

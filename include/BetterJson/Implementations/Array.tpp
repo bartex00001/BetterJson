@@ -9,8 +9,7 @@
 namespace json
 {
 
-template< Allocator TAllocator >
-Array::Array(std::shared_ptr< TAllocator > alloc, PrimArray& prim)
+Array::Array(std::shared_ptr< Allocator > alloc, PrimArray& prim)
 {
     data.reserve(prim.size);
     for(std::size_t i{}; i < prim.size; ++i)

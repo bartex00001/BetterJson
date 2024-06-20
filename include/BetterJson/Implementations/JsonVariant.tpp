@@ -14,7 +14,7 @@
 namespace json
 {
 
-inline JsonVariant::JsonVariant(PrimVariant& primVariant, std::shared_ptr< DefaultAllocator > alloc)
+inline JsonVariant::JsonVariant(PrimVariant& primVariant, std::shared_ptr< Allocator > alloc)
 	: json(primVariant),
       allocator(alloc)
 {}

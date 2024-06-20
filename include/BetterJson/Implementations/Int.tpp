@@ -20,8 +20,7 @@ inline Int::Int(Int&& other) noexcept
     : v(other.v)
 {}
 
-template<typename TAllocator>
-Int::Int(std::shared_ptr< TAllocator > alloc, PrimInt& prim)
+Int::Int(std::shared_ptr< Allocator > alloc, PrimInt& prim)
     : v(prim.value)
 {
     alloc->free(&prim);

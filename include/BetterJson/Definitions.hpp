@@ -15,3 +15,12 @@
 #ifndef BETTER_JSON_ARRAY_DEFAULT_CAPACITY
 #define BETTER_JSON_ARRAY_DEFAULT_CAPACITY 8
 #endif
+
+
+#include <BetterJson/MemoryPool.hpp>
+#include <BetterJson/CStdAllocator.hpp>
+
+namespace json
+{
+using DefaultAllocator = MemoryPool< CStdAllocator >;
+}

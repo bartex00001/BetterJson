@@ -13,9 +13,7 @@ public:
     String(const std::string& str);
     String(const String& other);
     String(String&& other) noexcept;
-
-    template< Allocator TAllocator >
-    String(std::shared_ptr< TAllocator > alloc, PrimString& prim);
+    String(std::shared_ptr< Allocator > alloc, PrimString& prim);
 
     std::string& value();
 

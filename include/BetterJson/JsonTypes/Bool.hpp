@@ -15,9 +15,7 @@ public:
     Bool(bool val);
     Bool(const Bool& other);
     Bool(Bool&& other) noexcept;
-
-    template< Allocator TAllocator >
-    Bool(std::shared_ptr< TAllocator > alloc, PrimBool& prim);
+    Bool(std::shared_ptr< Allocator > alloc, PrimBool& prim);
 
     bool& value();
     
